@@ -9,17 +9,71 @@ public class PlayerController : MonoBehaviour
     public int Inverse = 1;
     public float MapScrollSens = 1;
     public Vector3 PreviousPos;
+    public List<GameObject> selectedUnits = new List<GameObject>();
+    public GameObject[,,] map;
+    public GameManager gameManager;
     // Start is called before the first frame update
     void Start()
     {
-        
+        map = gameManager.map; 
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 map = new Vector3(0, 0, 0);
-
+        //left click check
+        /*         //Uncomment the following if you want to work on exprimental A* pahtfinding.
+            if (Input.GetMouseButtonDown(1))
+         {
+             if(selectedUnits.Count > 0)
+             {
+                 foreach(GameObject unit in selectedUnits)
+                 {
+                     var destination = Camera.main.ScreenPointToRay(Input.mousePosition);
+                     var location = unit.transform.position;
+                     List<GameObject> storedTiles = new List<GameObject>();
+                     List<GameObject> potentialTiles = new List<GameObject>();
+                     potentialTiles.Add(map[unit.GetComponent<Unit>().position[0],unit.GetComponent<Unit>().position[1],unit.GetComponent<Unit>().position[2]]);
+                 }
+             }
+         }*/
+        if (Input.GetMouseButtonDown(0))
+        {
+            //When creating code that you want run on left click, please create an appropriately named method, that way we don't
+            //have to wade through your code to find our code.
+            //Make sure the method can be called in any order relative to the other methods, that way nothing glitches out that we can't figure out.
+            Select();
+        }
+        MoveMap();
+    }
+    void Select()
+    {
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var hits = Physics.RaycastAll(ray);
+        GameObject SelectedObject = null;
+        foreach (RaycastHit hit in hits)
+        {
+            if (!selectedUnits.Contains(hit.transform.gameObject))
+            {
+                SelectedObject = hit.transform.gameObject;
+            }
+        }
+        if (SelectedObject != null)
+        {
+            TrySelect(SelectedObject);
+        }
+    }
+    void TrySelect(GameObject hit)
+    {
+        if(hit != null)
+        {
+            selectedUnits.Add(hit);
+            hit.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f);
+        }
+    }
+    void MoveMap()
+    {
+               Vector3 map = new Vector3(0, 0, 0);
         if (Input.GetKey(KeyCode.A))
         {
             map += new Vector3(-1f, 0, 0);
@@ -65,21 +119,17 @@ public class PlayerController : MonoBehaviour
             //Camera.main.transform.position = new Vector3(movement.x, movement.y, 0) +  Camera.main.transform.position;
 
         }
-        MoveMap(map);
-        void MoveMap(Vector3 selectPos)
+        if (PreviousPos == map)
         {
-            if (PreviousPos == selectPos)
-            {
 
-            }
-            else
-            {
-                Camera.FindObjectOfType<Camera>().transform.position += selectPos * MapMoveSens * Time.deltaTime;
+        }
+        else
+        {
+            Camera.FindObjectOfType<Camera>().transform.position += map * MapMoveSens * Time.deltaTime;
 
-                //Vector3 movement = PreviousPos - selectPos;
-                //Camera.FindObjectOfType<Camera>().transform.position += (movement * Inverse) * MapMoveSens;
-                //PreviousPos = selectPos + (movement * Inverse);
-            }
+            //Vector3 movement = PreviousPos - selectPos;
+            //Camera.FindObjectOfType<Camera>().transform.position += (movement * Inverse) * MapMoveSens;
+            //PreviousPos = selectPos + (movement * Inverse);
         }
     }
 }
