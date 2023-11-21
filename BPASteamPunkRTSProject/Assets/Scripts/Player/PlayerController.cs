@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     public List<GameObject> selectedUnits = new List<GameObject>();
     public GameObject[,,] map;
     public GameManager gameManager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,21 +23,44 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         //left click check
-        /*         //Uncomment the following if you want to work on exprimental A* pahtfinding.
-            if (Input.GetMouseButtonDown(1))
-         {
-             if(selectedUnits.Count > 0)
-             {
-                 foreach(GameObject unit in selectedUnits)
-                 {
-                     var destination = Camera.main.ScreenPointToRay(Input.mousePosition);
-                     var location = unit.transform.position;
-                     List<GameObject> storedTiles = new List<GameObject>();
-                     List<GameObject> potentialTiles = new List<GameObject>();
-                     potentialTiles.Add(map[unit.GetComponent<Unit>().position[0],unit.GetComponent<Unit>().position[1],unit.GetComponent<Unit>().position[2]]);
-                 }
-             }
-         }*/
+        //Uncomment the following if you want to work on exprimental A* pahtfinding.
+       /* if (Input.GetMouseButtonDown(1))
+        {
+            if (selectedUnits.Count > 0)
+            {
+                foreach (GameObject unit in selectedUnits)
+                {
+                    var destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    var location = unit.transform.position;
+                    List<TileInMemory> storedTiles = new List<TileInMemory>();
+                    List<GameObject> potentialTiles = new List<GameObject>();
+                    int[] position = unit.GetComponent<Unit>().position;
+                    potentialTiles.Add(map[unit.GetComponent<Unit>().position[0], unit.GetComponent<Unit>().position[1], unit.GetComponent<Unit>().position[2]]);
+                    //check for all tiles surrounding current
+                    //east
+                    float g = Vector3.Distance(destination, map[position[0]+1, position[1], position[2]].transform.position);
+                    storedTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1] }));        
+                    //north west
+                     g = Vector3.Distance(destination, map[position[0], position[1]+1, position[2]].transform.position);
+                    storedTiles.Add(new TileInMemory(1, g));         
+                    //north east
+                    g = Vector3.Distance(destination, map[position[0]+1, position[1]+1, position[2]].transform.position);
+                    storedTiles.Add(new TileInMemory(1, g));    
+                    //west
+                    g = Vector3.Distance(destination, map[position[0], position[1]-1, position[2]].transform.position);
+                    storedTiles.Add(new TileInMemory(1, g));
+                    //south east
+                    g = Vector3.Distance(destination, map[position[0]+1, position[1]-1, position[2]].transform.position);
+                    storedTiles.Add(new TileInMemory(1, g));
+                    //south west
+                    g = Vector3.Distance(destination, map[position[0]-1, position[1]-1, position[2]].transform.position);
+                    storedTiles.Add(new TileInMemory(1, g));
+=                    // simple list should allow all potential tiles to be organized by h value and checked every time. 
+                        storedTiles.Sort();
+                    //then check the first, add it to potential tiles, check for all the tiles around it, repeat.
+                }
+            }
+        }*/
         if (Input.GetMouseButtonDown(0))
         {
             //When creating code that you want run on left click, please create an appropriately named method, that way we don't
