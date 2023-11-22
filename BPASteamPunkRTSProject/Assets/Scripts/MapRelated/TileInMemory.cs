@@ -7,11 +7,19 @@ public class TileInMemory : MonoBehaviour
     public float f;
     public float g;
     public float h;
-    public TileInMemory(float fCost, float gCost, int[] fillLocation)
+    public int[] fillLocation;
+    public int x;
+    public int y;
+    public int layer;
+    public TileInMemory(float fCost, float gCost, int[] filllocation, int xLoc, int yLoc, int layerLoc)
     {
          f = fCost;
          g = gCost;
          h = f + g;
+        fillLocation = filllocation;
+        x = xLoc;
+        y = yLoc;
+        layer = layerLoc;
     }
     public int CompareTo(TileInMemory comparePart)
     {
