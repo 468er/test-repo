@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TileInMemory : MonoBehaviour
+public class TileInMemory
 {
     public float f;
     public float g;

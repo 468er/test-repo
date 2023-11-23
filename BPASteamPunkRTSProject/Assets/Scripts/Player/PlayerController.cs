@@ -29,48 +29,70 @@ public class PlayerController : MonoBehaviour
         {
             if (selectedUnits.Count > 0)
             {
-                var hits = Physics2D.RaycastAll(new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y), new Vector2(0,0));
+                var hits = Physics2D.RaycastAll(new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y), new Vector2(0, 0));
                 GameObject SelectedObject = null;
-                foreach (RaycastHit2D hit in hits)
-                {
-                    var destination = new Vector2((int)hit.transform.position.x, hit.transform.position.y);
-                }
-                if (SelectedObject != null)
-                {
-                    TrySelect(SelectedObject);
-                }
+                Vector2 destination;
+                     destination = new Vector2((int)hits[0].transform.position.x, (int)hits[0].transform.position.y);
                 foreach (GameObject unit in selectedUnits)
                 {
-                    var destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                     var location = unit.transform.position;
                     List<TileInMemory> storedTiles = new List<TileInMemory>();
                     List<TileInMemory> potentialTiles = new List<TileInMemory>();
                     int[] position = unit.GetComponent<Unit>().position;
+                    int[] prevPosition = null;
                     potentialTiles.Add(new TileInMemory(1, 0, null, position[0], position[1], position[2]));
-                    //check for all tiles surrounding current
-                    //east
-                    float g = Vector3.Distance(destination, map[position[0] + 1, position[1], position[2]].transform.position);
-                    storedTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }));
-                    //north west
-                    //                    g = Vector3.Distance(destination, map[position[0], position[1] + 1, position[2]].transform.position);
-                    //                    storedTiles.Add(new TileInMemory(1, g));
-                    //                    //north east
-                    //                    g = Vector3.Distance(destination, map[position[0] + 1, position[1] + 1, position[2]].transform.position);
-                    //                    storedTiles.Add(new TileInMemory(1, g));
-                    //                    //west
-                    //                    g = Vector3.Distance(destination, map[position[0], position[1] - 1, position[2]].transform.position);
-                    //                    storedTiles.Add(new TileInMemory(1, g));
-                    //                    //south east
-                    //                    g = Vector3.Distance(destination, map[position[0] + 1, position[1] - 1, position[2]].transform.position);
-                    //                    storedTiles.Add(new TileInMemory(1, g));
-                    //                    //south west
-                    //                    g = Vector3.Distance(destination, map[position[0] - 1, position[1] - 1, position[2]].transform.position);
-                    //                    storedTiles.Add(new TileInMemory(1, g));
-                    //=                    // simple list should allow all potential tiles to be organized by h value and checked every time. 
-                    storedTiles.Sort();
-                    potentialTiles.Add(map[storedTiles[0].x, storedTiles[0].y, storedTiles[0].layer]);
-                    position = new int[] { storedTiles[0].x, storedTiles[0].y, storedTiles[0].layer };
-                    //then check the first, add it to potential tiles, check for all the tiles around it, repeat.
+                    while(position[0] != destination.x && position[1] != destination.y)
+                    {
+                        //if psoition[0] is 0, it can only do east, north west, north east, west, 
+                        List<TileInMemory> theTiles = new List<TileInMemory>();
+                        //check for all tiles surrounding current
+                        var addposition = new int[] { position[0] + 1, position[1], position[2] };
+                        //east
+                        float g = Vector3.Distance(destination, map[position[0] + 1, position[1], position[2]].transform.position);
+                        theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, addposition[0], addposition[1], addposition[2]));
+                        //north west
+                        g = Vector3.Distance(destination, map[position[0], position[1] + 1, position[2]].transform.position);
+                        theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, addposition[0], addposition[1], addposition[2]));
+                        //                    //north east
+                        g = Vector3.Distance(destination, map[position[0] + 1, position[1] + 1, position[2]].transform.position);
+                        theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, addposition[0], addposition[1], addposition[2]));
+
+                        if(position[1] > 0)
+                        {
+                            //                    //west
+                            g = Vector3.Distance(destination, map[position[0], position[1] - 1, position[2]].transform.position);
+                            theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, addposition[0], addposition[1], addposition[2]));
+                            //                    //south east
+                            g = Vector3.Distance(destination, map[position[0] + 1, position[1] - 1, position[2]].transform.position);
+                            theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, addposition[0], addposition[1], addposition[2]));
+                            //                    //south west
+                        }
+                        if (position[0] > 0 && position[1] > 0)
+                        {
+
+                            g = Vector3.Distance(destination, map[position[0] - 1, position[1] - 1, position[2]].transform.position);
+                            theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, addposition[0], addposition[1], addposition[2]));
+                        }
+                        //=                    // simple list should allow all potential tiles to be organized by h value and checked every time. 
+                        if (prevPosition != null)
+                        {
+                            foreach(TileInMemory tile in theTiles)
+                            {
+                                if(tile.x == prevPosition[0] && tile.y == prevPosition[1])
+                                {
+
+                                }
+                                else
+                                {
+                                    storedTiles.Add(tile);
+                                }
+                            }
+                        }
+                        storedTiles.Sort();
+                        potentialTiles.Add(storedTiles[0]);
+                        prevPosition = position;
+                        position = new int[] { storedTiles[0].x, storedTiles[0].y, storedTiles[0].layer };
+                    }
                 }
             }
         }*/
