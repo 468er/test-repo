@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TileInMemory
+public class TileInMemory :  IComparable<TileInMemory>
 {
     public float f;
     public float g;
@@ -11,6 +12,9 @@ public class TileInMemory
     public int x;
     public int y;
     public int layer;
+    public int[] locationAsArr;
+    public Vector3 filllocationAsVector3;
+    public Vector3 locationAsVector3;
     public TileInMemory(float fCost, float gCost, int[] filllocation, int xLoc, int yLoc, int layerLoc)
     {
          f = fCost;
@@ -20,6 +24,9 @@ public class TileInMemory
         x = xLoc;
         y = yLoc;
         layer = layerLoc;
+        locationAsArr = new int[] { xLoc, yLoc, layerLoc };
+        filllocationAsVector3 = new Vector3(filllocation[0], filllocation[1], filllocation[2]);
+        locationAsVector3 = new Vector3(xLoc, yLoc, layerLoc);
     }
     public int CompareTo(TileInMemory comparePart)
     {
