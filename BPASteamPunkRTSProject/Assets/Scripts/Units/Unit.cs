@@ -6,6 +6,7 @@ public class Unit : MonoBehaviour
 {
     public int[] position = new int[] { 0, 0, 0};
     public Vector3 positionAsVector3;
+    public float moveSpeed = 5f;
     // Start is called before the first frame update
     void Start()
     {
