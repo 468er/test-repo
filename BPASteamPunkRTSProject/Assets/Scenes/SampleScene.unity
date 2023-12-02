@@ -357,6 +357,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   position: 000000000000000000000000
   positionAsVector3: {x: 0, y: 0, z: 0}
+  moveSpeed: 5
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,6 +538,7 @@ MonoBehaviour:
   tile: {fileID: 6892653868180111820, guid: 246ad3d9638d9844f979b3b4a819507f, type: 3}
   layer: {fileID: 2341485275555156393, guid: 41a7e20ae2a1f0548bbd60834d94344a, type: 3}
   Player1: {fileID: 727225511}
+  Tunnels: []
 --- !u!4 &953275043
 Transform:
   m_ObjectHideFlags: 0
