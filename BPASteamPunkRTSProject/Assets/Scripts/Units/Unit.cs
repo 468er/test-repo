@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    public int[] position = new int[] { 0, 0, 0};
+    public int[] position = new int[] { 0, 0, 0 };
     public Vector3 positionAsVector3;
     public float moveSpeed = 5f;
     // Start is called before the first frame update
@@ -16,6 +14,6 @@ public class Unit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

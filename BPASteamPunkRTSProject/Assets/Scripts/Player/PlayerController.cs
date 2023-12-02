@@ -43,7 +43,19 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1))
         {
-            MoveUnit();
+            if (selectedUnits.Count > 0)
+            {
+                var hits = Physics2D.RaycastAll(new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y), new Vector2(0, 0));
+                GameObject SelectedObject = null;
+                Vector2 destination;
+                //takes the array value of the hex that has been selected, and converts it to it's real world position.
+                destination = new Vector3(hits[0].transform.position.x, hits[0].transform.position.y / 0.86602540378443864676372317075294f, hits[0].transform.GetComponent<Tile>().position[2]);
+                foreach (GameObject unit in selectedUnits)
+                {
+                    ONETWOTHREE TheObj = MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), unit);
+                    PrepareMove(TheObj.PotentialTiles, unit);
+                }
+            }
         }
         if (Input.GetMouseButtonDown(0))
         {
@@ -54,171 +66,265 @@ public class PlayerController : MonoBehaviour
         }
         MoveMap();
     }
-    void MoveUnit()
+    ONETWOTHREE MoveUnit(Vector3 destination, Tile destinationTile, GameObject unit)
     {
-        if (selectedUnits.Count > 0)
+
+
+        //new class tunnel
+        //tunnel contains id, all squares, all layers covered.
+        //h value becomes distance from the entrance of the tunnel + length of tunnel + distance from exit of tunnel to destination.
+        bool[,,] mapForPathwayPurposes = new bool[map.GetLength(0), map.GetLength(1), map.GetLength(2)];
+        for (int x = 0; x < mapForPathwayPurposes.GetLength(0); x++)
         {
-            var hits = Physics2D.RaycastAll(new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y), new Vector2(0, 0));
-            GameObject SelectedObject = null;
-            Vector2 destination;
-            //takes the array value of the hex that has been selected, and converts it to it's real world position.
-            destination = new Vector2(hits[0].transform.position.x, hits[0].transform.position.y);
-
-            foreach (GameObject unit in selectedUnits)
+            for (int y = 0; y < mapForPathwayPurposes.GetLength(1); y++)
             {
-                bool[,,] mapForPathwayPurposes = new bool[map.GetLength(0), map.GetLength(1), map.GetLength(2)];
-                for(int x = 0; x < mapForPathwayPurposes.GetLength(0); x++)
+                for (int z = 0; z < mapForPathwayPurposes.GetLength(2); z++)
                 {
-                    for (int y = 0; y < mapForPathwayPurposes.GetLength(1); y++)
-                    {
-                        for (int z = 0; z < mapForPathwayPurposes.GetLength(2); z++)
-                        {
-                            mapForPathwayPurposes[x, y, z] = map[x, y, z].GetComponent<Tile>().Moveable;
-                        }
-                    }
+                    mapForPathwayPurposes[x, y, z] = map[x, y, z].GetComponent<Tile>().Moveable;
                 }
-                var location = unit.transform.position;
-                List<TileInMemory> storedTiles = new List<TileInMemory>();
-                List<TileInMemory> potentialTiles = new List<TileInMemory>();
-                List<TileInMemory> movetiles = new List<TileInMemory>();
-                int[] position = unit.GetComponent<Unit>().position;
-                int[] prevPosition = null;
-                //potentialTiles.Add(new TileInMemory(1, 0, null, position[0], position[1], position[2]));
-                float time = Time.time;
-                while ((position[0] != hits[0].transform.GetComponent<Tile>().position[0]) || (position[1] != hits[0].transform.GetComponent<Tile>().position[1]))
-                {
-                    //if psoition[0] is 0, it can only do east, north west, north east, west, 
-                    List<TileInMemory> theTiles = new List<TileInMemory>();
-                    //check for all tiles surrounding current
-                    //var position = new int[] { position[0] + 1, position[1], position[2] };
-                    //east
-                    float g = Vector3.Distance(destination, map[position[0] + 1, position[1], position[2]].transform.position);
-                    theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] + 1, position[1], position[2]));
-                    //even y axis
-                    if (Mathf.RoundToInt((2f * (float)(((float)position[1] / 2f) - (int)(position[1] / 2)))) != 1)
-                    {
-                        //north east if even y axis
-                        g = Vector3.Distance(destination, map[position[0] + 1, position[1] + 1, position[2]].transform.position);
-                        theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] + 1, position[1] + 1, position[2]));
-                        //                    //north west
-
-                        g = Vector3.Distance(destination, map[position[0], position[1] + 1, position[2]].transform.position);
-                        theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0], position[1] + 1, position[2]));
-
-                        if (position[1] > 0)
-                        {
-                            //                    //south west if even y axis 
-                            g = Vector3.Distance(destination, map[position[0], position[1] - 1, position[2]].transform.position);
-                            theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0], position[1] - 1, position[2]));
-
-                        }
-                        if (position[1] > 0)
-                        {
-                            //                    // southeast 
-                            g = Vector3.Distance(destination, map[position[0] + 1, position[1] - 1, position[2]].transform.position);
-                            theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] + 1, position[1] - 1, position[2]));
-                        }
-                    }// odd y axis
-                    else
-                    {
-                        //north east
-                        g = Vector3.Distance(destination, map[position[0], position[1] + 1, position[2]].transform.position);
-                        theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0], position[1] + 1, position[2]));
-                        if (position[0] > 0)
-                        {
-                            //                    //north west
-
-                            g = Vector3.Distance(destination, map[position[0] - 1, position[1] + 1, position[2]].transform.position);
-                            theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] - 1, position[1] + 1, position[2]));
-
-                        }
-
-                        if (position[1] > 0 && position[0] > 0)
-                        {
-                            //                    //south west 
-                            g = Vector3.Distance(destination, map[position[0] - 1, position[1] - 1, position[2]].transform.position);
-                            theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] - 1, position[1] - 1, position[2]));
-
-                        }
-                        if (position[1] > 0)
-                        {
-                            //                    // southeast if odd
-                            g = Vector3.Distance(destination, map[position[0], position[1] - 1, position[2]].transform.position);
-                            theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0], position[1] - 1, position[2]));
-                        }
-                    }
-                    if (position[0] > 0)
-                    {
-                        //west
-                        g = Vector3.Distance(destination, map[position[0] - 1, position[1], position[2]].transform.position);
-                        theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] - 1, position[1], position[2]));
-
-                    }
-                    //=                    // simple list should allow all potential tiles to be organized by h value and checked every time. 
-                    if (prevPosition != null)
-                    {
-                        foreach (TileInMemory tile in theTiles)
-                        {
-                            if (tile.x == prevPosition[0] && tile.y == prevPosition[1])
-                            {
-
-                            }
-                            else
-                            {
-                                TileInMemory newTile = storeTilesIfCheck(tile, theTiles, mapForPathwayPurposes);
-                                if (newTile != null)
-                                {
-                                    storedTiles.Add(newTile);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (TileInMemory tile in theTiles)
-                        {
-                           TileInMemory newTile = storeTilesIfCheck(tile, theTiles, mapForPathwayPurposes);
-                            if (newTile != null)
-                            {
-                                storedTiles.Add(newTile);
-                            }
-                            }
-                    }
-                    storedTiles.Sort();
-                    potentialTiles.Add(storedTiles[0]);
-                    storedTiles.Remove(storedTiles[0]);
-                    prevPosition = position;
-                    position = new int[] { potentialTiles[potentialTiles.Count - 1].x, potentialTiles[potentialTiles.Count - 1].y, potentialTiles[potentialTiles.Count - 1].layer };
-                    if (Time.time - time > 1)
-                    {
-                        return;
-                    }
-                }
-                movetiles.Add(potentialTiles[potentialTiles.Count - 1]);
-                while (movetiles[movetiles.Count - 1].filllocationAsVector3 != unit.GetComponent<Unit>().positionAsVector3)
-                {
-                    //movetiles.Add(potentialTiles.Find(x => x.locationAsArr == movetiles[movetiles.Count-1].fillLocation));
-                    foreach (TileInMemory tile in potentialTiles)
-                    {
-                        if (tile.locationAsVector3 == movetiles[movetiles.Count - 1].filllocationAsVector3)
-                        {
-                            movetiles.Add(tile);
-                        }
-                    }
-                }
-                movetiles.Reverse();
-                StartCoroutine(MoveOverTime(movetiles, map, unit.GetComponent<Unit>()));
             }
         }
+        var location = unit.transform.position;
+        List<TileInMemory> storedTiles = new List<TileInMemory>();
+        List<TileInMemory> potentialTiles = new List<TileInMemory>();
+        int[] position = unit.GetComponent<Unit>().position;
+        int[] prevPosition = null;
+        //potentialTiles.Add(new TileInMemory(1, 0, null, position[0], position[1], position[2]));
+        float time = Time.time;
+        while ((position[0] != destinationTile.position[0]) || (position[1] != destinationTile.position[1]))
+        {
+            bool IsGettingFarther = false;
+            //if psoition[0] is 0, it can only do east, north west, north east, west, 
+            List<TileInMemory> theTiles = new List<TileInMemory>();
+            //check for all tiles surrounding current
+            //var position = new int[] { position[0] + 1, position[1], position[2] };
+            bool XTooBig;
+            bool YTooBig;
+            if (position[0] + 1 >= map.GetLength(0))
+            {
+                XTooBig = true;
+            }
+            else
+            {
+                XTooBig = false;
+            }
+            if (position[1] + 1 >= map.GetLength(1))
+            {
+                YTooBig = true;
+            }
+            else
+            {
+                YTooBig = false;
+            }
+            //east
+            float g;
+            float z;
+            if (!XTooBig)
+            {
+                 g = Vector3.Distance(destination, map[position[0] + 1, position[1], position[2]].transform.position);
+                 z = Vector3.Distance(unit.transform.position, map[position[0] + 1, position[1], position[2]].transform.position);
+                theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] + 1, position[1], position[2], z));
+
+            }
+
+            //even y axis
+
+            if (Mathf.RoundToInt((2f * (float)(((float)position[1] / 2f) - (int)(position[1] / 2)))) != 1)
+            {
+
+                if(!XTooBig && !YTooBig)
+                {
+                    //north east if even y axis
+                    g = Vector3.Distance(destination, map[position[0] + 1, position[1] + 1, position[2]].transform.position);
+                    z = Vector3.Distance(unit.transform.position, map[position[0] + 1, position[1] + 1, position[2]].transform.position);
+                    theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] + 1, position[1] + 1, position[2], z));
+
+                }
+                if (!YTooBig)
+                {
+                    //                    //north west
+
+                    g = Vector3.Distance(destination, map[position[0], position[1] + 1, position[2]].transform.position);
+                    z = Vector3.Distance(unit.transform.position, map[position[0], position[1] + 1, position[2]].transform.position);
+
+                    theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0], position[1] + 1, position[2], z));
+
+                }
+                if (position[1] > 0)
+                {
+                    //                    //south west if even y axis 
+                    g = Vector3.Distance(destination, map[position[0], position[1] - 1, position[2]].transform.position);
+                    z = Vector3.Distance(unit.transform.position, map[position[0], position[1] - 1, position[2]].transform.position);
+
+                    theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0], position[1] - 1, position[2], z));
+
+                }
+                if (position[1] > 0)
+                {
+                    //                    // southeast 
+                    if (!XTooBig)
+                    {
+                        g = Vector3.Distance(destination, map[position[0] + 1, position[1] - 1, position[2]].transform.position);
+                        z = Vector3.Distance(unit.transform.position, map[position[0] + 1, position[1] - 1, position[2]].transform.position);
+
+                        theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] + 1, position[1] - 1, position[2], z));
+                    }
+                
+                }
+            }// odd y axis
+            else
+            {
+                //north east
+                if (!YTooBig)
+                {
+                    g = Vector3.Distance(destination, map[position[0], position[1] + 1, position[2]].transform.position);
+                    z = Vector3.Distance(unit.transform.position, map[position[0], position[1] + 1, position[2]].transform.position);
+
+                    theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0], position[1] + 1, position[2], z));
+                }
+                //                    //north west
+                if (position[0] > 0)
+                {
+                    if (!YTooBig)
+                    {
+                        g = Vector3.Distance(destination, map[position[0] - 1, position[1] + 1, position[2]].transform.position);
+                        z = Vector3.Distance(unit.transform.position, map[position[0] - 1, position[1] + 1, position[2]].transform.position);
+
+                        theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] - 1, position[1] + 1, position[2], z));
+                    }
+                   
+
+                }
+                //                    //south west 
+                if (position[1] > 0 && position[0] > 0)
+                {
+                    g = Vector3.Distance(destination, map[position[0] - 1, position[1] - 1, position[2]].transform.position);
+                    z = Vector3.Distance(unit.transform.position, map[position[0] - 1, position[1] - 1, position[2]].transform.position);
+
+                    theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] - 1, position[1] - 1, position[2], z));
+
+                }
+                if (position[1] > 0)
+                {
+                    //                    // southeast if odd
+                    g = Vector3.Distance(destination, map[position[0], position[1] - 1, position[2]].transform.position);
+                    z = Vector3.Distance(unit.transform.position, map[position[0], position[1] - 1, position[2]].transform.position);
+
+                    theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0], position[1] - 1, position[2], z));
+                }
+            }
+            //west
+            if (position[0] > 0)
+            {
+                g = Vector3.Distance(destination, map[position[0] - 1, position[1], position[2]].transform.position);
+                z = Vector3.Distance(unit.transform.position, map[position[0] - 1, position[1], position[2]].transform.position);
+
+                theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] - 1, position[1], position[2], z));
+
+            }
+            //=                    // simple list should allow all potential tiles to be organized by h value and checked every time. 
+            if (prevPosition != null)
+            {
+                float h;
+                foreach (TileInMemory tile in theTiles)
+                {
+                    // if the tile being checked was the previous hex, it shouldn't add it because otherwise it might get into an infinite loop.
+                    if (tile.x == prevPosition[0] && tile.y == prevPosition[1])
+                    {
+
+                    }
+                    else
+                    {
+                        //if check that returns a tile if conditions are met
+                        TileInMemory newTile = storeTilesIfCheck(tile, theTiles, mapForPathwayPurposes);
+                        if (newTile != null)
+                        {
+
+
+                            storedTiles.Add(newTile);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (TileInMemory tile in theTiles)
+                {
+                    TileInMemory newTile = storeTilesIfCheck(tile, theTiles, mapForPathwayPurposes);
+                    if (newTile != null)
+                    {
+                        storedTiles.Add(newTile);
+                        //potentialTiles[potentialTiles.Count - 1].children.Add(newTile);
+                    }
+                }
+            }
+            storedTiles.Sort();
+            potentialTiles.Add(storedTiles[0]);
+            //     if (IsGettingFarther == true)
+            //     {
+            ////by checking if the current tile's h value is higher than the last one, we know whether or not it is getting closer/farther.
+            //        if (potentialTiles[potentialTiles.Count -1].h > potentialTiles.Find(x => x.locationAsVector3 == potentialTiles[potentialTiles.Count - 1].filllocationAsVector3).h + .01f)
+            //        {
+
+            //        }
+            //         else
+            //           {
+            //          IsGettingFarther = false;
+            //         TileInMemory tile = potentialTiles[potentialTiles.Count - 1];
+            //         ONETWOTHREE TheObject = MoveUnit(new Vector2(map[tile.x, tile.y, tile.layer].transform.position.x, map[tile.x, tile.y, tile.layer].transform.position.y), map[tile.x, tile.y, tile.layer].GetComponent<Tile>(), unit);
+            //         potentialTiles = TheObject.PotentialTiles;
+            //         potentialTiles = TheObject.StoredTiles;
+            //            mapForPathwayPurposes = TheObject.walkPath;
+            //       }
+            //  }
+            //  else
+            //  {
+            //      TileInMemory newTile = potentialTiles[potentialTiles.Count - 1];
+            //     if (potentialTiles.Find(x => x.locationAsVector3 == newTile.filllocationAsVector3) != null)
+            //        {
+            //            if (newTile.h > potentialTiles.Find(x => x.locationAsVector3 == newTile.filllocationAsVector3).h + .01f)
+            //           {
+            //               IsGettingFarther = true;
+            //           }
+            //      }
+
+            //    }
+            storedTiles.Remove(storedTiles[0]);
+            prevPosition = position;
+            position = new int[] { potentialTiles[potentialTiles.Count - 1].x, potentialTiles[potentialTiles.Count - 1].y, potentialTiles[potentialTiles.Count - 1].layer };
+
+        }
+        return new ONETWOTHREE(storedTiles, potentialTiles, mapForPathwayPurposes);
+
+    }
+    void PrepareMove(List<TileInMemory> potentialTiles, GameObject unit)
+    {
+        List<TileInMemory> movetiles = new List<TileInMemory>();
+
+        movetiles.Add(potentialTiles[potentialTiles.Count - 1]);
+        while (movetiles[movetiles.Count - 1].filllocationAsVector3 != unit.GetComponent<Unit>().positionAsVector3)
+        {
+            //movetiles.Add(potentialTiles.Find(x => x.locationAsArr == movetiles[movetiles.Count-1].fillLocation));
+            foreach (TileInMemory tile in potentialTiles)
+            {
+                if (tile.locationAsVector3 == movetiles[movetiles.Count - 1].filllocationAsVector3)
+                {
+                    //if()
+                    movetiles.Add(tile);
+                }
+            }
+        }
+        movetiles.Reverse();
+        StartCoroutine(MoveOverTime(movetiles, map, unit.GetComponent<Unit>()));
     }
     TileInMemory storeTilesIfCheck(TileInMemory tile, List<TileInMemory> storedTiles, bool[,,] tempMap)
     {
-         if (tempMap[tile.x, tile.y, tile.layer] == true)
-               {
-                tempMap[tile.x, tile.y, tile.layer] = false;
+        if (tempMap[tile.x, tile.y, tile.layer] == true)
+        {
+            tempMap[tile.x, tile.y, tile.layer] = false;
             return tile;
-                }
- 
+        }
+
         return null;
 
     }
@@ -241,7 +347,7 @@ public class PlayerController : MonoBehaviour
     }
     void TrySelect(GameObject hit)
     {
-        if(hit != null)
+        if (hit != null)
         {
             selectedUnits.Add(hit);
             hit.GetComponent<SpriteRenderer>().color = new Color(0f, 1f, 0f);
@@ -249,7 +355,7 @@ public class PlayerController : MonoBehaviour
     }
     void MoveMap()
     {
-               Vector3 map = new Vector3(0, 0, 0);
+        Vector3 map = new Vector3(0, 0, 0);
         if (Input.GetKey(KeyCode.A))
         {
             map += new Vector3(-1f, 0, 0);
