@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public GameObject layer;
     public GameObject[,,] map;
     public PlayerController Player1;
-    public List<Tile> Tunnels = new List<Tile>();
+    public List<Tunnel> Tunnels = new List<Tunnel>();
     // Start is called before the first frame update
     void Start()
     {
@@ -31,10 +31,8 @@ public class GameManager : MonoBehaviour
             }
             newLayer.transform.position = new Vector3(x * w + w, 0, 0);
         }
-        map[2, 2, 0].GetComponent<Tile>().IsTunnel(1);
-        map[2, 2, 1].GetComponent<Tile>().IsTunnel(1);
-        Tunnels.Add(map[2, 2, 1].GetComponent<Tile>());
-        Tunnels.Add(map[2, 2, 0].GetComponent<Tile>());
+        map[2, 2, 0].GetComponent<Tile>().IsTunnel(1, this);
+        map[2, 2, 1].GetComponent<Tile>().IsTunnel(1, this);
         Player1.map = map;
     }
 

@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
             {
                 var hits = Physics2D.RaycastAll(new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y), new Vector2(0, 0));
                 GameObject SelectedObject = null;
-                Vector2 destination;
+                Vector3 destination;
                 //takes the array value of the hex that has been selected, and converts it to it's real world position.
                 destination = new Vector3(hits[0].transform.position.x, hits[0].transform.position.y / 0.86602540378443864676372317075294f, hits[0].transform.GetComponent<Tile>().position[2]);
                 foreach (GameObject unit in selectedUnits)
@@ -68,8 +68,47 @@ public class PlayerController : MonoBehaviour
     }
     ONETWOTHREE MoveUnit(Vector3 destination, Tile destinationTile, GameObject unit)
     {
+        List<Tile> entrancetiles = new List<Tile>();
+        List<List<TileInMemory>> list = new List<List<TileInMemory>>();
+        List<Tile> exits = new List<Tile>();
+        List<TunnelInMemory> ReOrganized = new List<TunnelInMemory>();
+        Vector3 destinationAsRealPosition = new Vector3(destination.x, destination.y * 0.86602540378443864676372317075294f, destination.z);
+        if (destination.z != unit.GetComponent<Unit>().positionAsVector3.z)
+        {
+            //search for something that 
+            foreach(Tunnel item in gameManager.Tunnels)
+            {
+                //if the tunnel contains a tile that leads to the exit layer
+                if (item.layers.Contains(Mathf.RoundToInt(destination.z)))
+                {
+                    //if the tunnel contains a tile that leads to entrance layer
+                    List<Tile> entrance = item.Tiles.FindAll(x => x.position[2] == unit.GetComponent<Unit>().positionAsVector3.z);
+                    exits = item.Tiles.FindAll(x => x.position[2] == destination.z);
+                    for(int i = 0; i < exits.Count; i++)
+                    {
+                        exits[i].IsTunnelExit(exits[i], Vector2.Distance(exits[i].transform.position, destination));
+                    }
+                    if (entrance != null)
+                    {
+                        foreach(Tile tile in entrance)
+                        {
+                            entrancetiles.Add(tile);
+                        }
+                        for(int x = 0; x < exits.Count; x++)
+                        {
+                            for (int y = 0; y < entrance.Count; y++)
+                            {
+                                TunnelInMemory tun = new TunnelInMemory(item.id, exits[x], entrance[y], unit.transform.position, destinationAsRealPosition);
+                                ReOrganized.Add(tun);
+                            }
+                        }
 
-
+                    }
+                    //for each tunnel, if it contains exit layer, an contains entrance layer, it needs to do all combinatiosn. So, I guess creating a new tunnel class with only one entrance and exit, length, and distance from dest is the way to go.
+                }
+            }
+        }
+         
         //new class tunnel
         //tunnel contains id, all squares, all layers covered.
         //h value becomes distance from the entrance of the tunnel + length of tunnel + distance from exit of tunnel to destination.

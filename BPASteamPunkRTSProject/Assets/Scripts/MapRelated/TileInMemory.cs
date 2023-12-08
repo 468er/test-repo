@@ -62,4 +62,47 @@ public class ONETWOTHREE
         }
     }
 }
+public class Tunnel
+{
+    public int id;
+    public List<Tile> Tiles = new List<Tile>();
+    public List<int> layers = new List<int>();
+    public Tunnel (int ID, Tile tile)
+    {
+        id = ID;
+        Tiles.Add(tile);
+        if (!layers.Contains(tile.Tunnel))
+        {
+            layers.Add(tile.Tunnel);
+        }
+    }
+}public class TunnelInMemory
+{
+    public int id;
+    public Tile Entrance;
+    public Tile Exit;
+    public float length;
+    public float distanceFromDestination;
+    public float distanceFromUnit;
+    public float h;
+    public TunnelInMemory(int ID, Tile tile, Tile exitTile, Vector2 unitPos, Vector2 destPos)
+    {
+        id = ID;
+        Entrance = tile;
+        Exit = exitTile;
+        length = Vector2.Distance(tile.transform.position, exitTile.transform.position);
+        distanceFromDestination = Vector2.Distance(destPos, exitTile.transform.position);
+        distanceFromUnit = Vector2.Distance(unitPos, tile.transform.position);
+        h = length + distanceFromDestination + distanceFromUnit;
+    }
+    public int CompareTo(TunnelInMemory comparePart)
+    {
+        // A null value means that this object is greater.
+        if (comparePart == null)
+            return 1;
+
+        else
+            return this.h.CompareTo(comparePart.h);
+    }
+}
 
