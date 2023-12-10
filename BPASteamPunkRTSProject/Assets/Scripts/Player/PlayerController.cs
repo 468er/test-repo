@@ -117,6 +117,7 @@ public class PlayerController : MonoBehaviour
             {
                 YTooBig = false;
             }
+            
             //east
             float g;
             float z;
@@ -224,43 +225,102 @@ public class PlayerController : MonoBehaviour
 
             }
             //=                    // simple list should allow all potential tiles to be organized by h value and checked every time. 
+            List<TunnelInMemory> ReOrganized = new List<TunnelInMemory>();
             if (prevPosition != null)
             {
-                float h;
+                if (position[2] != destination.z)
+                {
+                    Tile currentTile = map[position[0], position[1], position[2]].GetComponent<Tile>();
+                    TunnelInMemory tunnel = ReOrganized.Find(x => x.Entrance == map[position[0], position[1], position[2]].GetComponent<Tile>());
+                    if (map[position[0], position[1], position[2]].GetComponent<Tile>().Tunnel != 0)
+                    {
+                        storedTiles.Add(new TileInMemory(tunnel.length, tunnel.distanceFromDestination, tunnel.Exit.position, tunnel.Exit.position[0], tunnel.Exit.position[1], tunnel.Exit.position[2], 0));
+
+                    }
+                }
                 foreach (TileInMemory tile in theTiles)
                 {
-                    // if the tile being checked was the previous hex, it shouldn't add it because otherwise it might get into an infinite loop.
                     if (tile.x == prevPosition[0] && tile.y == prevPosition[1])
                     {
 
                     }
                     else
                     {
-                        //if check that returns a tile if conditions are met
                         TileInMemory newTile = storeTilesIfCheck(tile, theTiles, mapForPathwayPurposes);
                         if (newTile != null)
-                        {
+                        {   //
+                            TileInMemory newestTile = newTile;
+                            if (position[2] != destination.z)
+                            {
 
-
-                            storedTiles.Add(newTile);
+                                List<Tile> entrancetiles = new List<Tile>();
+                                List<List<TileInMemory>> list = new List<List<TileInMemory>>();
+                                List<Tile> exits = new List<Tile>();
+                                //search for something that 
+                                foreach (Tunnel item in gameManager.Tunnels)
+                                {
+                                    //if the tunnel contains a tile that leads to the exit layer
+                                    if (item.layers.Contains(Mathf.RoundToInt(destination.z)))
+                                    {
+                                        //if the tunnel contains a tile that leads to entrance layer
+                                        List<Tile> entrance = item.Tiles.FindAll(x => x.position[2] == unit.GetComponent<Unit>().positionAsVector3.z);
+                                        exits = item.Tiles.FindAll(x => x.position[2] == destination.z);
+                                        for (int i = 0; i < exits.Count; i++)
+                                        {
+                                            exits[i].IsTunnelExit(exits[i], Vector2.Distance(exits[i].transform.position, destination));
+                                        }
+                                        if (entrance != null)
+                                        {
+                                            ReOrganized.Clear();
+                                            foreach (Tile Tile in entrance)
+                                            {
+                                                entrancetiles.Add(Tile);
+                                            }
+                                            for (int x = 0; x < exits.Count; x++)
+                                            {
+                                                for (int y = 0; y < entrance.Count; y++)
+                                                {
+                                                    TunnelInMemory tun = new TunnelInMemory(item.id, exits[x], entrance[y], map[position[0], position[1], position[2]].transform.position, destinationAsRealPosition);
+                                                    ReOrganized.Add(tun);
+                                                }
+                                            }
+                                            ReOrganized.Sort();
+                                            newestTile = new TileInMemory(1, ReOrganized[0].h, new int[] { newTile.fillLocation[0], newTile.fillLocation[1], newTile.fillLocation[2] }, newTile.x, newTile.y, newTile.layer, newTile.z);
+                                        }
+                                        //for each tunnel, if it contains exit layer, an contains entrance layer, it needs to do all combinatiosn. So, I guess creating a new tunnel class with only one entrance and exit, length, and distance from dest is the way to go.
+                                    }
+                                }
+                            }
+                            storedTiles.Add(newestTile);
+                            //potentialTiles[potentialTiles.Count - 1].children.Add(newTile);
                         }
                     }
                 }
             }
             else
             {
+                if (position[2] != unit.GetComponent<Unit>().positionAsVector3.z)
+                {
+                    Tile currentTile = map[position[0], position[1], position[2]].GetComponent<Tile>();
+                    TunnelInMemory tunnel = ReOrganized.Find(x => x.Entrance == map[position[0], position[1], position[2]].GetComponent<Tile>());
+                    if (map[position[0], position[1], position[2]].GetComponent<Tile>().Tunnel != 0)
+                    {
+                        storedTiles.Add(new TileInMemory(tunnel.length, tunnel.distanceFromDestination, tunnel.Exit.position, tunnel.Exit.position[0], tunnel.Exit.position[1], tunnel.Exit.position[2], 0));
+    
+                    }
+                }
                 foreach (TileInMemory tile in theTiles)
                 {
                     TileInMemory newTile = storeTilesIfCheck(tile, theTiles, mapForPathwayPurposes);
                     if (newTile != null)
                     {   //
                         TileInMemory newestTile = newTile;
-                        if (destination.z != unit.GetComponent<Unit>().positionAsVector3.z)
+                        if (position[2] != unit.GetComponent<Unit>().positionAsVector3.z)
                         {
+                           
                             List<Tile> entrancetiles = new List<Tile>();
                             List<List<TileInMemory>> list = new List<List<TileInMemory>>();
                             List<Tile> exits = new List<Tile>();
-                            List<TunnelInMemory> ReOrganized = new List<TunnelInMemory>();
                             //search for something that 
                             foreach (Tunnel item in gameManager.Tunnels)
                             {
@@ -276,6 +336,7 @@ public class PlayerController : MonoBehaviour
                                     }
                                     if (entrance != null)
                                     {
+                                        ReOrganized.Clear();
                                         foreach (Tile Tile in entrance)
                                         {
                                             entrancetiles.Add(Tile);

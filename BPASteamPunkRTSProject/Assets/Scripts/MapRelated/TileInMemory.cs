@@ -18,6 +18,7 @@ public class TileInMemory : IComparable<TileInMemory>
     public List<TileInMemory> children;
     public TileInMemory(float fCost, float gCost, int[] filllocation, int xLoc, int yLoc, int layerLoc, float zcost)
     {
+        //location is in array space, not real world space. 
         f = fCost;
         g = gCost;
         z = zcost;
