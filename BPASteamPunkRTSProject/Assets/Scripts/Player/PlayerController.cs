@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour
     public List<GameObject> selectedUnits = new List<GameObject>();
     public GameObject[,,] map;
     public GameManager gameManager;
+    public  List<GameObject> movetiles2 = new List<GameObject>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,10 +25,17 @@ public class PlayerController : MonoBehaviour
 
         foreach (TileInMemory item in MoveList)
         {
-            while (unit.transform.position != map[item.x, item.y, item.layer].transform.position)
+            if (Vector2.Distance(unit.transform.position, map[item.x, item.y, item.layer].transform.position) > 1)
             {
-                unit.transform.position = Vector3.MoveTowards(unit.transform.position, map[item.x, item.y, item.layer].transform.position, unit.moveSpeed * Time.deltaTime);
-                yield return null;
+                unit.transform.position = map[item.x, item.y, item.layer].transform.position;
+            }
+            else
+            {
+                while (unit.transform.position != map[item.x, item.y, item.layer].transform.position)
+                {
+                    unit.transform.position = Vector3.MoveTowards(unit.transform.position, map[item.x, item.y, item.layer].transform.position, unit.moveSpeed * Time.deltaTime);
+                    yield return null;
+                }
             }
             unit.position = new int[] { item.x, item.y, item.layer };
             unit.positionAsVector3 = new Vector3(item.x, item.y, item.layer);
@@ -92,7 +101,8 @@ public class PlayerController : MonoBehaviour
         int[] prevPosition = null;
         //potentialTiles.Add(new TileInMemory(1, 0, null, position[0], position[1], position[2]));
         float time = Time.time;
-        while ((position[0] != destinationTile.position[0]) || (position[1] != destinationTile.position[1]))
+        List<TunnelInMemory> ReOrganized = new List<TunnelInMemory>();
+        while ((position[0] != destinationTile.position[0]) || (position[1] != destinationTile.position[1]) || (position[2] != destinationTile.position[2]))
         {
             bool IsGettingFarther = false;
             //if psoition[0] is 0, it can only do east, north west, north east, west, 
@@ -225,16 +235,17 @@ public class PlayerController : MonoBehaviour
 
             }
             //=                    // simple list should allow all potential tiles to be organized by h value and checked every time. 
-            List<TunnelInMemory> ReOrganized = new List<TunnelInMemory>();
+            //all iterations after first
             if (prevPosition != null)
             {
+
                 if (position[2] != destination.z)
                 {
                     Tile currentTile = map[position[0], position[1], position[2]].GetComponent<Tile>();
                     TunnelInMemory tunnel = ReOrganized.Find(x => x.Entrance == map[position[0], position[1], position[2]].GetComponent<Tile>());
                     if (map[position[0], position[1], position[2]].GetComponent<Tile>().Tunnel != 0)
                     {
-                        storedTiles.Add(new TileInMemory(tunnel.length, tunnel.distanceFromDestination, tunnel.Exit.position, tunnel.Exit.position[0], tunnel.Exit.position[1], tunnel.Exit.position[2], 0));
+                        storedTiles.Add(new TileInMemory(tunnel.length, tunnel.distanceFromDestination, tunnel.Entrance.position, tunnel.Exit.position[0], tunnel.Exit.position[1], tunnel.Exit.position[2], 0));
 
                     }
                 }
@@ -246,6 +257,7 @@ public class PlayerController : MonoBehaviour
                     }
                     else
                     {
+                        //if check to see if boolean map lines up
                         TileInMemory newTile = storeTilesIfCheck(tile, theTiles, mapForPathwayPurposes);
                         if (newTile != null)
                         {   //
@@ -267,7 +279,7 @@ public class PlayerController : MonoBehaviour
                                         exits = item.Tiles.FindAll(x => x.position[2] == destination.z);
                                         for (int i = 0; i < exits.Count; i++)
                                         {
-                                            exits[i].IsTunnelExit(exits[i], Vector2.Distance(exits[i].transform.position, destination));
+                                            exits[i].IsTunnelExit(exits[i], Vector2.Distance(exits[i].transform.position, destinationAsRealPosition));
                                         }
                                         if (entrance != null)
                                         {
@@ -280,7 +292,7 @@ public class PlayerController : MonoBehaviour
                                             {
                                                 for (int y = 0; y < entrance.Count; y++)
                                                 {
-                                                    TunnelInMemory tun = new TunnelInMemory(item.id, exits[x], entrance[y], map[position[0], position[1], position[2]].transform.position, destinationAsRealPosition);
+                                                    TunnelInMemory tun = new TunnelInMemory(item.id, entrance[y], exits[x], map[tile.x, tile.y, tile.layer].transform.position, destinationAsRealPosition);
                                                     ReOrganized.Add(tun);
                                                 }
                                             }
@@ -296,10 +308,10 @@ public class PlayerController : MonoBehaviour
                         }
                     }
                 }
-            }
+            }//first iteration
             else
             {
-                if (position[2] != unit.GetComponent<Unit>().positionAsVector3.z)
+                if (position[2] != destination.z)
                 {
                     Tile currentTile = map[position[0], position[1], position[2]].GetComponent<Tile>();
                     TunnelInMemory tunnel = ReOrganized.Find(x => x.Entrance == map[position[0], position[1], position[2]].GetComponent<Tile>());
@@ -315,7 +327,7 @@ public class PlayerController : MonoBehaviour
                     if (newTile != null)
                     {   //
                         TileInMemory newestTile = newTile;
-                        if (position[2] != unit.GetComponent<Unit>().positionAsVector3.z)
+                        if (position[2] != destination.z)
                         {
                            
                             List<Tile> entrancetiles = new List<Tile>();
@@ -345,7 +357,7 @@ public class PlayerController : MonoBehaviour
                                         {
                                             for (int y = 0; y < entrance.Count; y++)
                                             {
-                                                TunnelInMemory tun = new TunnelInMemory(item.id, exits[x], entrance[y], unit.transform.position, destinationAsRealPosition);
+                                                TunnelInMemory tun = new TunnelInMemory(item.id, entrance[y], exits[x], unit.transform.position, destinationAsRealPosition);
                                                 ReOrganized.Add(tun);
                                             }
                                         }
@@ -418,6 +430,10 @@ public class PlayerController : MonoBehaviour
             }
         }
         movetiles.Reverse();
+        foreach( TileInMemory tile in movetiles)
+        {
+            movetiles2.Add(map[(int)tile.locationAsVector3.x, (int)tile.locationAsVector3.y, (int)tile.locationAsVector3.z]);
+        }
         StartCoroutine(MoveOverTime(movetiles, map, unit.GetComponent<Unit>()));
     }
     TileInMemory storeTilesIfCheck(TileInMemory tile, List<TileInMemory> storedTiles, bool[,,] tempMap)
