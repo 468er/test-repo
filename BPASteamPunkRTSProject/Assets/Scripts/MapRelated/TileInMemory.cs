@@ -75,6 +75,7 @@ public class Tunnel
         if (!layers.Contains(tile.Tunnel))
         {
             layers.Add(tile.Tunnel);
+            layers.Add(0);
         }
     }
 }public class TunnelInMemory

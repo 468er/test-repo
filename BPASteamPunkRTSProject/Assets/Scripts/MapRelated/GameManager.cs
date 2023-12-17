@@ -33,6 +33,8 @@ public class GameManager : MonoBehaviour
         }
         map[2, 2, 0].GetComponent<Tile>().IsTunnel(1, this);
         map[2, 2, 1].GetComponent<Tile>().IsTunnel(1, this);
+        map[4, 4, 1].GetComponent<Tile>().IsTunnel(2, this);
+        map[4, 4, 2].GetComponent<Tile>().IsTunnel(2, this);
         Player1.map = map;
     }
 
