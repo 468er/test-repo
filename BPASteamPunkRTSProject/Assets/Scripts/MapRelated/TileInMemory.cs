@@ -72,13 +72,34 @@ public class Tunnel
     {
         id = ID;
         Tiles.Add(tile);
-        if (!layers.Contains(tile.Tunnel))
+        if (!layers.Contains(tile.position[2]))
         {
-            layers.Add(tile.Tunnel);
-            layers.Add(0);
+            layers.Add(tile.position[2]);
         }
     }
-}public class TunnelInMemory
+   
+}
+public class TunnelList
+{
+    public List<Tunnel> tunnels = new List<Tunnel>();
+    public TunnelList(List<Tunnel> Ts)
+    {
+        tunnels = Ts;
+    }
+}
+public class LT_G3_U
+{
+   public List<TileInMemory> MoveList1;
+  public  GameObject[,,] map1;
+   public Unit unit1;
+    public LT_G3_U( List<TileInMemory> MoveList, GameObject[,,] map, Unit unit)
+    {
+        MoveList1 = MoveList;
+        map1 = map;
+        unit1 = unit;
+    }
+}
+public class TunnelInMemory
 {
     public int id;
     public Tile Entrance;

@@ -295,7 +295,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 0.7995101, b: 0, a: 1}
   m_FlipX: 0
@@ -488,6 +488,7 @@ MonoBehaviour:
   PreviousPos: {x: 0, y: 0, z: 0}
   selectedUnits: []
   gameManager: {fileID: 953275042}
+  movetiles2: []
 --- !u!4 &727225512
 Transform:
   m_ObjectHideFlags: 0
@@ -538,7 +539,6 @@ MonoBehaviour:
   tile: {fileID: 6892653868180111820, guid: 246ad3d9638d9844f979b3b4a819507f, type: 3}
   layer: {fileID: 2341485275555156393, guid: 41a7e20ae2a1f0548bbd60834d94344a, type: 3}
   Player1: {fileID: 727225511}
-  Tunnels: []
 --- !u!4 &953275043
 Transform:
   m_ObjectHideFlags: 0

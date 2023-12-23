@@ -6,6 +6,7 @@ public class Tile : MonoBehaviour
     public bool Moveable;
     public int Tunnel;
     public float distancefromExit;
+    public Vector3 positionAsVector3;
     public void IsTunnel(int i, GameManager gameManager)
     {
         transform.GetComponent<SpriteRenderer>().color = new Color(.3f, 0, 0);
@@ -21,6 +22,10 @@ public class Tile : MonoBehaviour
         if (GcontainsThisTunnel)
         {
             gameManager.Tunnels.Find(x => x.id == i).Tiles.Add(this);
+            if (!gameManager.Tunnels.Find(x => x.id == i).layers.Contains(position[2]))
+            {
+                gameManager.Tunnels.Find(x => x.id == i).layers.Add(position[2]);
+            }
         }
         else
         {
@@ -34,4 +39,8 @@ public class Tile : MonoBehaviour
         distancefromExit = distance;
     }
     // Start is called before the first frame update
+    private void Start()
+    {
+        positionAsVector3 = new Vector3(position[0], position[1], position[2]);
+    }
 }
