@@ -18,6 +18,7 @@ public class TileInMemory : IComparable<TileInMemory>
     public List<TileInMemory> children;
     public TileInMemory(float fCost, float gCost, int[] filllocation, int xLoc, int yLoc, int layerLoc, float zcost)
     {
+        //location is in array space, not real world space. 
         f = fCost;
         g = gCost;
         z = zcost;
@@ -60,6 +61,71 @@ public class ONETWOTHREE
                 }
             }
         }
+    }
+}
+public class Tunnel
+{
+    public int id;
+    public List<Tile> Tiles = new List<Tile>();
+    public List<int> layers = new List<int>();
+    public Tunnel (int ID, Tile tile)
+    {
+        id = ID;
+        Tiles.Add(tile);
+        if (!layers.Contains(tile.position[2]))
+        {
+            layers.Add(tile.position[2]);
+        }
+    }
+   
+}
+public class TunnelList
+{
+    public List<Tunnel> tunnels = new List<Tunnel>();
+    public TunnelList(List<Tunnel> Ts)
+    {
+        tunnels = Ts;
+    }
+}
+public class LT_G3_U
+{
+   public List<TileInMemory> MoveList1;
+  public  GameObject[,,] map1;
+   public Unit unit1;
+    public LT_G3_U( List<TileInMemory> MoveList, GameObject[,,] map, Unit unit)
+    {
+        MoveList1 = MoveList;
+        map1 = map;
+        unit1 = unit;
+    }
+}
+public class TunnelInMemory
+{
+    public int id;
+    public Tile Entrance;
+    public Tile Exit;
+    public float length;
+    public float distanceFromDestination;
+    public float distanceFromUnit;
+    public float h;
+    public TunnelInMemory(int ID, Tile tile, Tile exitTile, Vector2 unitPos, Vector2 destPos)
+    {
+        id = ID;
+        Entrance = tile;
+        Exit = exitTile;
+        length = Vector2.Distance(tile.transform.position, exitTile.transform.position);
+        distanceFromDestination = Vector2.Distance(destPos, exitTile.transform.position);
+        distanceFromUnit = Vector2.Distance(unitPos, tile.transform.position);
+        h = length + distanceFromDestination + distanceFromUnit;
+    }
+    public int CompareTo(TunnelInMemory comparePart)
+    {
+        // A null value means that this object is greater.
+        if (comparePart == null)
+            return 1;
+
+        else
+            return this.h.CompareTo(comparePart.h);
     }
 }
 
