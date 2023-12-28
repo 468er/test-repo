@@ -22,31 +22,33 @@ public class PlayerController : MonoBehaviour
    
     // Update is called once per frame
 
-    void PrepareMoveOrders(Vector3 destination, RaycastHit2D[] hits, GameObject unit)
+    Coroutine PrepareMoveOrders(Vector3 destination, RaycastHit2D[] hits, int[] position, Vector3 Pos, Vector3 posAsVec3, TileInMemory cancelOrderReturnTile, bool UnitMoving, GameObject Unit)
     {
+        Coroutine returnCoroutine = null;
         LT_G3_U moveprepared = null;
         //if the layer distance is greater than one, just try to get to the next layer
-        for(int a = 0; a < Mathf.Abs(destination.z - unit.GetComponent<Unit>().position[2]) - 1; a ++)
+        for(int a = 0; a < Mathf.Abs(destination.z - position[2]) - 1; a ++)
         {
-            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), unit, false));
+            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), position, Pos, posAsVec3, false));
         }
         if(moveOrders.Count > 0)
         {
             int count = moveOrders.Count;
             int potentialTilesCount = moveOrders[count - 1].PotentialTiles.Count;
             TileInMemory last = moveOrders[count -1].PotentialTiles[potentialTilesCount - 1];
-            GameObject tile = map[last.x, last.y, last.layer];
-            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), tile, true));
+           GameObject tile =  map[last.x, last.y, last.layer];
+            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), tile.GetComponent<Tile>().position, tile.transform.position, tile.GetComponent<Tile>().positionAsVector3, true));
         }
         else
         {
-            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), unit, true));
+            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), position, Pos, posAsVec3, false));
         }
+        //the tiles are inputted into this list, and then given to the unit to move through. 
         List<TileInMemory> newLst = new List<TileInMemory>();
         moveOrders.Reverse();
         foreach (ONETWOTHREE item in moveOrders)
         {
-            moveprepared = PrepareMove(item.PotentialTiles, unit);
+            moveprepared = PrepareMove(item.PotentialTiles, Unit);
             moveprepared.MoveList1.Reverse();
             foreach(TileInMemory item2 in moveprepared.MoveList1)
             {
@@ -57,16 +59,93 @@ public class PlayerController : MonoBehaviour
         if(moveprepared != null)
         {
             moveOrders.Clear();
+            if(cancelOrderReturnTile != null)
+            {
+                newLst.Add(cancelOrderReturnTile);
+            }
             newLst.Reverse();
-            StartCoroutine(unit.GetComponent<Unit>().MoveOverTime(newLst, moveprepared.map1, moveprepared.unit1));
+             returnCoroutine= StartCoroutine(Unit.GetComponent<Unit>().MoveOverTime(newLst, moveprepared.map1, moveprepared.unit1));
         }
+        return returnCoroutine;
+    }  
+    List<TileInMemory> PrepareAddMoveOrders(Vector3 destination, RaycastHit2D[] hits, int[] position, Vector3 Pos, Vector3 posAsVec3, TileInMemory cancelOrderReturnTile, bool UnitMoving, GameObject Unit)
+    {
+        LT_G3_U moveprepared = null;
+        //if the layer distance is greater than one, just try to get to the next layer
+        for (int a = 0; a < Mathf.Abs(destination.z - position[2]) - 1; a++)
+        {
+            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), position, Pos, posAsVec3, false));
+        }
+        if (moveOrders.Count > 0)
+        {
+            int count = moveOrders.Count;
+            int potentialTilesCount = moveOrders[count - 1].PotentialTiles.Count;
+            TileInMemory last = moveOrders[count - 1].PotentialTiles[potentialTilesCount - 1];
+            GameObject tile = map[last.x, last.y, last.layer];
+            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), tile.GetComponent<Tile>().position, tile.transform.position, tile.GetComponent<Tile>().positionAsVector3, true));
+        }
+        else
+        {
+            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), position, Pos, posAsVec3, false));
+        }
+        //the tiles are inputted into this list, and then given to the unit to move through. 
+        List<TileInMemory> newLst = new List<TileInMemory>();
+        moveOrders.Reverse();
+        foreach (ONETWOTHREE item in moveOrders)
+        {
+            moveprepared = PrepareMove(item.PotentialTiles, Unit);
+            moveprepared.MoveList1.Reverse();
+            foreach(TileInMemory item2 in moveprepared.MoveList1)
+            {
+                newLst.Add(item2);
+
+            }
+        }
+        if(moveprepared != null)
+        {
+            moveOrders.Clear();
+            if(cancelOrderReturnTile != null)
+            {
+                newLst.Add(cancelOrderReturnTile);
+            }
+            newLst.Reverse();
+        }
+        return newLst;
     }
     void Update()
     {
-        //left click check
-        //Uncomment the following if you want to work on exprimental A* pahtfinding.
+        if(Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButtonDown(1))
+        {
+            var hits = Physics2D.RaycastAll(new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y), new Vector2(0, 0));
+            GameObject SelectedObject = null;
+            Vector3 destination;
+            //takes the array value of the hex that has been selected, and converts it to it's real world position.
+            destination = new Vector3(hits[0].transform.position.x, hits[0].transform.position.y / 0.86602540378443864676372317075294f, hits[0].transform.GetComponent<Tile>().position[2]);
+            foreach (GameObject unit in selectedUnits)
+            {
+                Unit Unit = unit.GetComponent<Unit>();
+                TileInMemory lastTile = null;
+                if (unit.GetComponent<Unit>().moving)
+                {
+                    List<TileInMemory> test = PrepareAddMoveOrders(destination, hits, Unit.moveTiles[Unit.moveTiles.Count -1].locationAsArr, map[Unit.moveTiles[Unit.moveTiles.Count - 1].x, Unit.moveTiles[Unit.moveTiles.Count - 1].y, Unit.moveTiles[Unit.moveTiles.Count - 1].layer].transform.position, Unit.moveTiles[Unit.moveTiles.Count - 1].locationAsVector3, lastTile, true, unit);
+                    foreach (TileInMemory item in test)
+                    {
+                        unit.GetComponent<Unit>().moveTiles.Add(item);
+                    }
+                }
+                else
+                {
 
-        if (Input.GetMouseButtonDown(1))
+                    Coroutine test = PrepareMoveOrders(destination, hits, Unit.position, Unit.transform.position, Unit.positionAsVector3, lastTile, true, unit);
+                    if (test != null)
+                    {
+                        unit.GetComponent<Unit>().movingRoutine = test;
+                    }
+                }
+            }
+        }
+        //right click check
+        else if (Input.GetMouseButtonDown(1))
         {
             if (selectedUnits.Count > 0)
             {
@@ -77,7 +156,17 @@ public class PlayerController : MonoBehaviour
                 destination = new Vector3(hits[0].transform.position.x, hits[0].transform.position.y / 0.86602540378443864676372317075294f, hits[0].transform.GetComponent<Tile>().position[2]);
                 foreach (GameObject unit in selectedUnits)
                 {
-                     PrepareMoveOrders(destination, hits, unit);
+                    Unit Unit = unit.GetComponent<Unit>();
+                    TileInMemory lastTile = null;
+                     if (unit.GetComponent<Unit>().moving == true)
+                    {
+                      lastTile =     unit.GetComponent<Unit>().ClearForMovement();
+                    }
+                     Coroutine test = PrepareMoveOrders(destination, hits, Unit.position, Unit.transform.position, Unit.positionAsVector3, lastTile, true, unit);
+                    if(test != null)
+                    {
+                        unit.GetComponent<Unit>().movingRoutine = test;
+                    }
 
                 }
             }
@@ -91,7 +180,7 @@ public class PlayerController : MonoBehaviour
         }
         MoveMap();
     }
-    ONETWOTHREE MoveUnit(Vector3 destination, Tile destinationTile, GameObject unit, bool normal)
+    ONETWOTHREE MoveUnit(Vector3 destination, Tile destinationTile, int[] Position, Vector3 uPos , Vector3 PosAsVec3, bool normal)
     {
 
         Vector3 destinationAsRealPosition = new Vector3(destination.x, destination.y * 0.86602540378443864676372317075294f, destination.z);
@@ -110,17 +199,9 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-        var location = unit.transform.position;
         List<TileInMemory> storedTiles = new List<TileInMemory>();
         List<TileInMemory> potentialTiles = new List<TileInMemory>();
-        int[] position;
-        if (unit.GetComponent<Unit>() != null)
-        {
-            position = unit.GetComponent<Unit>().position;
-        }
-        else {
-           position = unit.GetComponent<Tile>().position;
-        }
+        int[] position = Position;
         int[] prevPosition = position;
         //potentialTiles.Add(new TileInMemory(1, 0, null, position[0], position[1], position[2]));
         float time = Time.time;
@@ -175,7 +256,7 @@ public class PlayerController : MonoBehaviour
             if (!XTooBig)
             {
                  g = Vector3.Distance(destination, map[position[0] + 1, position[1], position[2]].transform.position);
-                 z = Vector3.Distance(unit.transform.position, map[position[0] + 1, position[1], position[2]].transform.position);
+                 z = Vector3.Distance(uPos, map[position[0] + 1, position[1], position[2]].transform.position);
                 theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] + 1, position[1], position[2], z));
 
             }
@@ -189,7 +270,7 @@ public class PlayerController : MonoBehaviour
                 {
                     //north east if even y axis
                     g = Vector3.Distance(destination, map[position[0] + 1, position[1] + 1, position[2]].transform.position);
-                    z = Vector3.Distance(unit.transform.position, map[position[0] + 1, position[1] + 1, position[2]].transform.position);
+                    z = Vector3.Distance(uPos, map[position[0] + 1, position[1] + 1, position[2]].transform.position);
                     theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] + 1, position[1] + 1, position[2], z));
 
                 }
@@ -198,7 +279,7 @@ public class PlayerController : MonoBehaviour
                     //                    //north west
 
                     g = Vector3.Distance(destination, map[position[0], position[1] + 1, position[2]].transform.position);
-                    z = Vector3.Distance(unit.transform.position, map[position[0], position[1] + 1, position[2]].transform.position);
+                    z = Vector3.Distance(uPos, map[position[0], position[1] + 1, position[2]].transform.position);
 
                     theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0], position[1] + 1, position[2], z));
 
@@ -207,7 +288,7 @@ public class PlayerController : MonoBehaviour
                 {
                     //                    //south west if even y axis 
                     g = Vector3.Distance(destination, map[position[0], position[1] - 1, position[2]].transform.position);
-                    z = Vector3.Distance(unit.transform.position, map[position[0], position[1] - 1, position[2]].transform.position);
+                    z = Vector3.Distance(uPos, map[position[0], position[1] - 1, position[2]].transform.position);
 
                     theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0], position[1] - 1, position[2], z));
 
@@ -218,7 +299,7 @@ public class PlayerController : MonoBehaviour
                     if (!XTooBig)
                     {
                         g = Vector3.Distance(destination, map[position[0] + 1, position[1] - 1, position[2]].transform.position);
-                        z = Vector3.Distance(unit.transform.position, map[position[0] + 1, position[1] - 1, position[2]].transform.position);
+                        z = Vector3.Distance(uPos, map[position[0] + 1, position[1] - 1, position[2]].transform.position);
 
                         theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] + 1, position[1] - 1, position[2], z));
                     }
@@ -231,7 +312,7 @@ public class PlayerController : MonoBehaviour
                 if (!YTooBig)
                 {
                     g = Vector3.Distance(destination, map[position[0], position[1] + 1, position[2]].transform.position);
-                    z = Vector3.Distance(unit.transform.position, map[position[0], position[1] + 1, position[2]].transform.position);
+                    z = Vector3.Distance(uPos, map[position[0], position[1] + 1, position[2]].transform.position);
 
                     theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0], position[1] + 1, position[2], z));
                 }
@@ -241,7 +322,7 @@ public class PlayerController : MonoBehaviour
                     if (!YTooBig)
                     {
                         g = Vector3.Distance(destination, map[position[0] - 1, position[1] + 1, position[2]].transform.position);
-                        z = Vector3.Distance(unit.transform.position, map[position[0] - 1, position[1] + 1, position[2]].transform.position);
+                        z = Vector3.Distance(uPos, map[position[0] - 1, position[1] + 1, position[2]].transform.position);
 
                         theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] - 1, position[1] + 1, position[2], z));
                     }
@@ -252,7 +333,7 @@ public class PlayerController : MonoBehaviour
                 if (position[1] > 0 && position[0] > 0)
                 {
                     g = Vector3.Distance(destination, map[position[0] - 1, position[1] - 1, position[2]].transform.position);
-                    z = Vector3.Distance(unit.transform.position, map[position[0] - 1, position[1] - 1, position[2]].transform.position);
+                    z = Vector3.Distance(uPos, map[position[0] - 1, position[1] - 1, position[2]].transform.position);
 
                     theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] - 1, position[1] - 1, position[2], z));
 
@@ -261,7 +342,7 @@ public class PlayerController : MonoBehaviour
                 {
                     //                    // southeast if odd
                     g = Vector3.Distance(destination, map[position[0], position[1] - 1, position[2]].transform.position);
-                    z = Vector3.Distance(unit.transform.position, map[position[0], position[1] - 1, position[2]].transform.position);
+                    z = Vector3.Distance(uPos, map[position[0], position[1] - 1, position[2]].transform.position);
 
                     theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0], position[1] - 1, position[2], z));
                 }
@@ -270,7 +351,7 @@ public class PlayerController : MonoBehaviour
             if (position[0] > 0)
             {
                 g = Vector3.Distance(destination, map[position[0] - 1, position[1], position[2]].transform.position);
-                z = Vector3.Distance(unit.transform.position, map[position[0] - 1, position[1], position[2]].transform.position);
+                z = Vector3.Distance(uPos, map[position[0] - 1, position[1], position[2]].transform.position);
 
                 theTiles.Add(new TileInMemory(1, g, new int[] { position[0], position[1], position[2] }, position[0] - 1, position[1], position[2], z));
 
@@ -319,14 +400,10 @@ public class PlayerController : MonoBehaviour
                                         {
                                             //if the tunnel contains a tile that leads to entrance layer
                                             List<Tile> entrance;
-                                            if (unit.GetComponent<Unit>() != null)
-                                            {
-                                                entrance = item.Tiles.FindAll(x => x.position[2] == unit.GetComponent<Unit>().positionAsVector3.z);
-                                            }
-                                            else
-                                            {
-                                                entrance = item.Tiles.FindAll(x => x.position[2] == unit.GetComponent<Tile>().positionAsVector3.z);
-                                            }
+                                        
+                                                entrance = item.Tiles.FindAll(x => x.position[2] == PosAsVec3.z);
+                                        
+                                       
                                            
                                             exits = item.Tiles.FindAll(x => x.position[2] == position[2] + (multiplicity));
                                             for (int i = 0; i < exits.Count; i++)
@@ -368,14 +445,9 @@ public class PlayerController : MonoBehaviour
                                         {
                                             //if the tunnel contains a tile that leads to entrance layer
                                             List<Tile> entrance;
-                                            if (unit.GetComponent<Unit>() != null)
-                                            {
-                                                entrance = item.Tiles.FindAll(x => x.position[2] == unit.GetComponent<Unit>().positionAsVector3.z);
-                                            }
-                                            else
-                                            {
-                                                entrance = item.Tiles.FindAll(x => x.position[2] == unit.GetComponent<Tile>().positionAsVector3.z);
-                                            }
+                                       
+                                                entrance = item.Tiles.FindAll(x => x.position[2] == PosAsVec3.z);
+                                     
                                             exits = item.Tiles.FindAll(x => x.position[2] == destination.z);
                                             for (int i = 0; i < exits.Count; i++)
                                             {
@@ -446,15 +518,9 @@ public class PlayerController : MonoBehaviour
                                     {
                                         //if the tunnel contains a tile that leads to entrance layer
                                         List<Tile> entrance;
-                                        if (unit.GetComponent<Unit>() != null)
-                                        {
-                                            entrance = item.Tiles.FindAll(x => x.position[2] == unit.GetComponent<Unit>().positionAsVector3.z);
-                                        }
-                                        else
-                                        {
-                                            entrance = item.Tiles.FindAll(x => x.position[2] == unit.GetComponent<Tile>().positionAsVector3.z);
-                                        }
-
+                            
+                                            entrance = item.Tiles.FindAll(x => x.position[2] == PosAsVec3.z);
+                                  
                                         exits = item.Tiles.FindAll(x => x.position[2] == position[2] + (multiplicity));
                                         for (int i = 0; i < exits.Count; i++)
                                         {
@@ -495,14 +561,9 @@ public class PlayerController : MonoBehaviour
                                     {
                                         //if the tunnel contains a tile that leads to entrance layer
                                         List<Tile> entrance;
-                                        if (unit.GetComponent<Unit>() != null)
-                                        {
-                                            entrance = item.Tiles.FindAll(x => x.position[2] == unit.GetComponent<Unit>().positionAsVector3.z);
-                                        }
-                                        else
-                                        {
-                                            entrance = item.Tiles.FindAll(x => x.position[2] == unit.GetComponent<Tile>().positionAsVector3.z);
-                                        }
+                          
+                                            entrance = item.Tiles.FindAll(x => x.position[2] == PosAsVec3.z);
+                            
                                         exits = item.Tiles.FindAll(x => x.position[2] == destination.z);
                                         for (int i = 0; i < exits.Count; i++)
                                         {
@@ -519,7 +580,7 @@ public class PlayerController : MonoBehaviour
                                             {
                                                 for (int y = 0; y < entrance.Count; y++)
                                                 {
-                                                    TunnelInMemory tun = new TunnelInMemory(item.id, entrance[y], exits[x], unit.transform.position, destinationAsRealPosition);
+                                                    TunnelInMemory tun = new TunnelInMemory(item.id, entrance[y], exits[x], uPos, destinationAsRealPosition);
                                                     ReOrganized.Add(tun);
                                                 }
                                             }
