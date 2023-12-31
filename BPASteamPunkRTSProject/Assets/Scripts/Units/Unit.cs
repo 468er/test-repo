@@ -5,14 +5,21 @@ public class Unit : MonoBehaviour
 {
     public int[] position = new int[] { 0, 0, 0 };
     public Vector3 positionAsVector3;
-    public float moveSpeed = 5f;
     public List<TileInMemory> moveTiles = new List<TileInMemory>();
     public bool moving = false;
     public Coroutine movingRoutine;
     public TileInMemory lastTile;
     public GameObject transporter = null;
+
+    public float moveSpeed = 5f;
+    public float Health = 10;
+    public float Damage = 10;
+    public float Range = 10;
+    public unit_Type _Type;
+
+    public bool isEnemy = false;
     // Start is called before the first frame update
-    public  void Start()
+    public void Start()
     {
         positionAsVector3 = new Vector3(position[0], position[1], position[2]);
     }
@@ -63,4 +70,9 @@ public class Unit : MonoBehaviour
         moving = false;
         return LastTile;
     }
+}
+public enum unit_Type
+{
+    soldier,
+    
 }

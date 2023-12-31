@@ -12,6 +12,13 @@ public class GameManager : MonoBehaviour
     public GameObject[,,] map;
     public PlayerController Player1;
     public List<Tunnel> Tunnels = new List<Tunnel>();
+
+    public bool is_on_button_1 { get; internal set; }
+    public bool is_on_button_2 { get; internal set; }
+    public bool is_on_button_4 { get; internal set; }
+    public bool is_on_button_3 { get; internal set; }
+    public bool is_on_button_5 { get; internal set; }
+
     // Start is called before the first frame update
     void Start()
     {
