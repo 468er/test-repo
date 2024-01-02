@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerController : MonoBehaviour
 {
@@ -22,14 +23,30 @@ public class PlayerController : MonoBehaviour
    
     // Update is called once per frame
 
-    Coroutine PrepareMoveOrders(Vector3 destination, RaycastHit2D[] hits, int[] position, Vector3 Pos, Vector3 posAsVec3, TileInMemory cancelOrderReturnTile, bool UnitMoving, GameObject Unit)
+    Coroutine PrepareMoveOrders(Vector3 destination, List<GameObject> hits, int[] position, Vector3 Pos, Vector3 posAsVec3, TileInMemory cancelOrderReturnTile, bool UnitMoving, GameObject Unit)
     {
         Coroutine returnCoroutine = null;
         LT_G3_U moveprepared = null;
-        //if the layer distance is greater than one, just try to get to the next layer
-        for(int a = 0; a < Mathf.Abs(destination.z - position[2]) - 1; a ++)
+        int[] pos;
+        Unit unittest = hits[0].GetComponent<Unit>();
+        Tile unittest2 = hits[0].GetComponent<Tile>();
+
+        if (unittest != null)
         {
-            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), position, Pos, posAsVec3, false));
+            pos = unittest.position;   
+        }
+        else if (unittest2 != null)
+        {
+            pos = unittest2.position;
+        }
+        else
+        {
+            pos = new int[] { 0, 0, 0 };
+        }
+        //if the layer distance is greater than one, just try to get to the next layer
+        for (int a = 0; a < Mathf.Abs(destination.z - position[2]) - 1; a ++)
+        {
+            moveOrders.Add(MoveUnit(destination, pos, position, Pos, posAsVec3, false));
         }
         if(moveOrders.Count > 0)
         {
@@ -37,11 +54,11 @@ public class PlayerController : MonoBehaviour
             int potentialTilesCount = moveOrders[count - 1].PotentialTiles.Count;
             TileInMemory last = moveOrders[count -1].PotentialTiles[potentialTilesCount - 1];
            GameObject tile =  map[last.x, last.y, last.layer];
-            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), tile.GetComponent<Tile>().position, tile.transform.position, tile.GetComponent<Tile>().positionAsVector3, true));
+            moveOrders.Add(MoveUnit(destination, pos, tile.GetComponent<Tile>().position, tile.transform.position, tile.GetComponent<Tile>().positionAsVector3, true));
         }
         else
         {
-            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), position, Pos, posAsVec3, false));
+            moveOrders.Add(MoveUnit(destination, pos, position, Pos, posAsVec3, false));
         }
         //the tiles are inputted into this list, and then given to the unit to move through. 
         List<TileInMemory> newLst = new List<TileInMemory>();
@@ -64,17 +81,32 @@ public class PlayerController : MonoBehaviour
                 newLst.Add(cancelOrderReturnTile);
             }
             newLst.Reverse();
-             returnCoroutine= StartCoroutine(Unit.GetComponent<Unit>().MoveOverTime(newLst, moveprepared.map1, moveprepared.unit1));
+             Unit.GetComponent<Unit>().MoveOverTime(newLst, moveprepared.map1, moveprepared.unit1);
         }
-        return returnCoroutine;
+        return null;
     }  
-    List<TileInMemory> PrepareAddMoveOrders(Vector3 destination, RaycastHit2D[] hits, int[] position, Vector3 Pos, Vector3 posAsVec3, TileInMemory cancelOrderReturnTile, bool UnitMoving, GameObject Unit)
+    List<TileInMemory> PrepareAddMoveOrders(Vector3 destination, List<GameObject> hits, int[] position, Vector3 Pos, Vector3 posAsVec3, TileInMemory cancelOrderReturnTile, bool UnitMoving, GameObject Unit)
     {
+        int[] pos;
+        Unit unittest = hits[0].GetComponent<Unit>();
+        if (unittest != null)
+        {
+            pos = unittest.position;
+        }
+        Tile unittest2 = hits[0].GetComponent<Tile>();
+        if (unittest2 != null)
+        {
+            pos = unittest2.position;
+        }
+        else
+        {
+            pos = new int[] { 0, 0, 0 };
+        }
         LT_G3_U moveprepared = null;
         //if the layer distance is greater than one, just try to get to the next layer
         for (int a = 0; a < Mathf.Abs(destination.z - position[2]) - 1; a++)
         {
-            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), position, Pos, posAsVec3, false));
+            moveOrders.Add(MoveUnit(destination, pos, position, Pos, posAsVec3, false));
         }
         if (moveOrders.Count > 0)
         {
@@ -82,11 +114,11 @@ public class PlayerController : MonoBehaviour
             int potentialTilesCount = moveOrders[count - 1].PotentialTiles.Count;
             TileInMemory last = moveOrders[count - 1].PotentialTiles[potentialTilesCount - 1];
             GameObject tile = map[last.x, last.y, last.layer];
-            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), tile.GetComponent<Tile>().position, tile.transform.position, tile.GetComponent<Tile>().positionAsVector3, true));
+            moveOrders.Add(MoveUnit(destination, pos, tile.GetComponent<Tile>().position, tile.transform.position, tile.GetComponent<Tile>().positionAsVector3, true));
         }
         else
         {
-            moveOrders.Add(MoveUnit(destination, hits[0].transform.GetComponent<Tile>(), position, Pos, posAsVec3, false));
+            moveOrders.Add(MoveUnit(destination, pos, position, Pos, posAsVec3, false));
         }
         //the tiles are inputted into this list, and then given to the unit to move through. 
         List<TileInMemory> newLst = new List<TileInMemory>();
@@ -117,32 +149,17 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButtonDown(1))
         {
             var hits = Physics2D.RaycastAll(new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y), new Vector2(0, 0));
+            List<GameObject> hitsToGOBJ = new List<GameObject>();
+            for (int i = 0; i < hits.Length; i++)
+            {
+                hitsToGOBJ[i] = hits[i].transform.gameObject;
+            }
             GameObject SelectedObject = null;
             Vector3 destination;
             //takes the array value of the hex that has been selected, and converts it to it's real world position.
             destination = new Vector3(hits[0].transform.position.x, hits[0].transform.position.y / 0.86602540378443864676372317075294f, hits[0].transform.GetComponent<Tile>().position[2]);
-            foreach (GameObject unit in selectedUnits)
-            {
-                Unit Unit = unit.GetComponent<Unit>();
-                TileInMemory lastTile = null;
-                if (unit.GetComponent<Unit>().moving)
-                {
-                    List<TileInMemory> test = PrepareAddMoveOrders(destination, hits, Unit.moveTiles[Unit.moveTiles.Count -1].locationAsArr, map[Unit.moveTiles[Unit.moveTiles.Count - 1].x, Unit.moveTiles[Unit.moveTiles.Count - 1].y, Unit.moveTiles[Unit.moveTiles.Count - 1].layer].transform.position, Unit.moveTiles[Unit.moveTiles.Count - 1].locationAsVector3, lastTile, true, unit);
-                    foreach (TileInMemory item in test)
-                    {
-                        unit.GetComponent<Unit>().moveTiles.Add(item);
-                    }
-                }
-                else
-                {
+            OrderUnits(destination, hitsToGOBJ, selectedUnits);
 
-                    Coroutine test = PrepareMoveOrders(destination, hits, Unit.position, Unit.transform.position, Unit.positionAsVector3, lastTile, true, unit);
-                    if (test != null)
-                    {
-                        unit.GetComponent<Unit>().movingRoutine = test;
-                    }
-                }
-            }
         }
         //right click check
         else if (Input.GetMouseButtonDown(1))
@@ -150,25 +167,38 @@ public class PlayerController : MonoBehaviour
             if (selectedUnits.Count > 0)
             {
                 var hits = Physics2D.RaycastAll(new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y), new Vector2(0, 0));
-                GameObject SelectedObject = null;
-                Vector3 destination;
-                //takes the array value of the hex that has been selected, and converts it to it's real world position.
-                destination = new Vector3(hits[0].transform.position.x, hits[0].transform.position.y / 0.86602540378443864676372317075294f, hits[0].transform.GetComponent<Tile>().position[2]);
-                foreach (GameObject unit in selectedUnits)
+                List<GameObject> hitsToGOBJ = new List<GameObject>();
+                for(int i = 0; i < hits.Length; i++)
                 {
-                    Unit Unit = unit.GetComponent<Unit>();
-                    TileInMemory lastTile = null;
-                     if (unit.GetComponent<Unit>().moving == true)
-                    {
-                      lastTile =     unit.GetComponent<Unit>().ClearForMovement();
-                    }
-                     Coroutine test = PrepareMoveOrders(destination, hits, Unit.position, Unit.transform.position, Unit.positionAsVector3, lastTile, true, unit);
-                    if(test != null)
-                    {
-                        unit.GetComponent<Unit>().movingRoutine = test;
-                    }
-
+                    hitsToGOBJ.Add( hits[i].transform.gameObject);
                 }
+                RaycastHit2D[] unit1 = Array.FindAll(hits, x => x.transform.GetComponent<Unit>());
+                //if clicking on unit 
+                if (unit1.Length > 0)
+                {
+                    Unit unit2 = unit1[0].transform.GetComponent<Unit>();
+                    if (unit2.isEnemy)
+                    {
+                        foreach(GameObject unit in selectedUnits)
+                        {
+                            unit.GetComponent<Unit>().Attack(unit2.gameObject, false);
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                }
+                else
+                {
+                    GameObject SelectedObject = null;
+                    Vector3 destination;
+                    //takes the array value of the hex that has been selected, and converts it to it's real world position.
+                    destination = new Vector3(hits[0].transform.position.x, hits[0].transform.position.y / 0.86602540378443864676372317075294f, hits[0].transform.GetComponent<Tile>().position[2]);
+                    
+                    OrderUnits(destination, hitsToGOBJ, selectedUnits);
+                }
+              
             }
         }
         if (Input.GetMouseButtonDown(0))
@@ -180,7 +210,44 @@ public class PlayerController : MonoBehaviour
         }
         MoveMap();
     }
-    ONETWOTHREE MoveUnit(Vector3 destination, Tile destinationTile, int[] Position, Vector3 uPos , Vector3 PosAsVec3, bool normal)
+    public void OrderUnits(Vector3 destination, List<GameObject> hits, List<GameObject> selectedUnits2)
+    {
+        foreach (GameObject unit in selectedUnits2)
+        {
+            Unit Unit = unit.GetComponent<Unit>();
+            TileInMemory lastTile = null;
+            //if it's moving, it adds orders because it's a shiftclick
+            if (unit.GetComponent<Unit>().moving)
+            {
+                if (Input.GetKey(KeyCode.LeftShift))
+                {
+                    List<TileInMemory> test = PrepareAddMoveOrders(destination, hits, Unit.moveTiles[Unit.moveTiles.Count - 1].locationAsArr, map[Unit.moveTiles[Unit.moveTiles.Count - 1].x, Unit.moveTiles[Unit.moveTiles.Count - 1].y, Unit.moveTiles[Unit.moveTiles.Count - 1].layer].transform.position, Unit.moveTiles[Unit.moveTiles.Count - 1].locationAsVector3, lastTile, true, unit);
+                    foreach (TileInMemory item in test)
+                    {
+                        unit.GetComponent<Unit>().moveTiles.Add(item);
+                    }
+                }
+                else
+                {
+                    lastTile = unit.GetComponent<Unit>().ClearForMovement();
+                    NewMove(destination, hits, Unit, lastTile, unit);
+                }
+            }
+            else
+            {
+                NewMove(destination, hits, Unit, lastTile, unit);
+            }
+        }
+    }
+    public void NewMove(Vector3 destination, List<GameObject> hits, Unit Unit, TileInMemory lastTile, GameObject unit)
+    {
+        Coroutine test = PrepareMoveOrders(destination, hits, Unit.position, Unit.transform.position, Unit.positionAsVector3, lastTile, true, unit);
+        if (test != null)
+        {
+            unit.GetComponent<Unit>().movingRoutine = test;
+        }
+    }
+    ONETWOTHREE MoveUnit(Vector3 destination, int[] destinationTile, int[] Position, Vector3 uPos , Vector3 PosAsVec3, bool normal)
     {
 
         Vector3 destinationAsRealPosition = new Vector3(destination.x, destination.y * 0.86602540378443864676372317075294f, destination.z);
@@ -220,7 +287,7 @@ public class PlayerController : MonoBehaviour
         while (endLoopConditions == false)
         {
             //start of new code for multiple tunnels
-            int numToSubtractForAllTileLayersNeeded = destinationTile.position[2] - position[2];
+            int numToSubtractForAllTileLayersNeeded = destinationTile[2] - position[2];
             //this finds all the layers in tunnels
             //List < List < Tunnel >> ListofTunnels = new List<List<Tunnel>>();
             //List<Tunnel> Path = new List<Tunnel>();
@@ -639,7 +706,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 
-                if((position[0] == destinationTile.position[0]) && (position[1] == destinationTile.position[1]) && (position[2] == destinationTile.position[2]))
+                if((position[0] == destinationTile[0]) && (position[1] == destinationTile[1]) && (position[2] == destinationTile[2]))
                 {
                     endLoopConditions = true;
                 }
@@ -710,11 +777,11 @@ public class PlayerController : MonoBehaviour
     void Select()
     {
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        var hits = Physics.RaycastAll(ray);
+        var hits = Physics2D.RaycastAll(new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y), new Vector2(0, 0));
         GameObject SelectedObject = null;
-        foreach (RaycastHit hit in hits)
+        foreach (RaycastHit2D hit in hits)
         {
-            if (!selectedUnits.Contains(hit.transform.gameObject))
+            if (!selectedUnits.Contains(hit.transform.gameObject) && hit.transform.GetComponent<Unit>() != null)
             {
                 SelectedObject = hit.transform.gameObject;
             }

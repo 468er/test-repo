@@ -13,18 +13,68 @@ public class Unit : MonoBehaviour
 
     public float moveSpeed = 5f;
     public float Health = 10;
+    public float MaxHealth = 10;
     public float Damage = 10;
     public float Range = 10;
     public unit_Type _Type;
 
     public bool isEnemy = false;
+    public PlayerController user;
+    public List<GameObject> targets = new List<GameObject>();
+    public bool StopAfterTargetDeaths;
+    public GameObject[,,] map;
     // Start is called before the first frame update
     public void Start()
     {
         positionAsVector3 = new Vector3(position[0], position[1], position[2]);
     }
     // Update is called once per frame
-    public IEnumerator MoveOverTime(List<TileInMemory> MoveList, GameObject[,,] map, Unit unit)
+    public void Update()
+    {
+        if(moveTiles.Count > 0) 
+        {
+            if (0 < moveTiles.Count)
+            {
+
+                int a = 0;
+                if (Vector2.Distance(transform.position, map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position) > 1)
+                {
+                    transform.position = map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position;
+                }
+                else
+                {
+                    if (transform.position != map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position)
+                    {
+                        transform.position = Vector3.MoveTowards(transform.position, map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position, moveSpeed * Time.deltaTime);
+                    }
+                    else
+                    {
+                        position = new int[] { moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer };
+                        positionAsVector3 = new Vector3(moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer);
+                        lastTile = moveTiles[a];
+                        moveTiles.Remove(moveTiles[a]);
+                    }
+                }
+            }
+            for (int i = 0; i < targets.Count; i++)
+            {
+                if (targets[i] == null)
+                {
+                    targets.Remove(targets[i]);
+                    i--;
+                }
+            }
+            foreach (GameObject obj in targets)
+            {
+                Attack(obj, true);
+            }
+        }
+        else
+        {
+            moving = false;
+        }
+    }
+    public void MoveOverTime(List<TileInMemory> MoveList, GameObject[,,] Map, Unit unit)
     {
         moving = true;
         int a = 0;
@@ -34,26 +84,32 @@ public class Unit : MonoBehaviour
             a++;
         }
         a = 0;
-        while( 0 < moveTiles.Count)
-        {
-            if (Vector2.Distance(unit.transform.position, map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position) > 1)
-            {
-                unit.transform.position = map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position;
+        if(targets.Count > 0) {
+               
             }
-            else
-            {
-                while (unit.transform.position != map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position)
-                {
-                    unit.transform.position = Vector3.MoveTowards(unit.transform.position, map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position, unit.moveSpeed * Time.deltaTime);
-                    yield return null;
-                }
-            }
-            unit.position = new int[] { moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer };
-            unit.positionAsVector3 = new Vector3(moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer);
-            lastTile = moveTiles[a];
-            moveTiles.Remove(moveTiles[a]);
-        }
-        moving = false;
+        map = Map;
+        //while( 0 < moveTiles.Count)
+        //{
+            
+           
+        //        if (Vector2.Distance(unit.transform.position, map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position) > 1)
+        //        {
+        //            unit.transform.position = map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position;
+        //        }
+        //        else
+        //        {
+        //            while (unit.transform.position != map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position)
+        //            {
+        //                unit.transform.position = Vector3.MoveTowards(unit.transform.position, map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position, unit.moveSpeed * Time.deltaTime);
+        //                yield return null;
+        //            }
+        //        }
+        //        unit.position = new int[] { moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer };
+        //        unit.positionAsVector3 = new Vector3(moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer);
+        //        lastTile = moveTiles[a];
+        //        moveTiles.Remove(moveTiles[a]);
+            
+        //}
         //foreach (TileInMemory MoveList[a] in MoveList)
         //{
            
@@ -69,6 +125,45 @@ public class Unit : MonoBehaviour
         moveTiles.Clear();
         moving = false;
         return LastTile;
+    }
+    public void Attack(GameObject receiver, bool moving)
+    {
+        if (Vector2.Distance(this.transform.position, receiver.transform.position) <= Range)
+        {
+            receiver.GetComponent<Unit>().TakeDamage(this.gameObject);
+        }
+        else
+        {
+            if(moving == false)
+            {
+                List<GameObject> list = new List<GameObject>();
+                list.Add(receiver);
+                List<GameObject> list2 = new List<GameObject>();
+                list2.Add(this.gameObject);
+                StopAfterTargetDeaths = true;
+                targets.Add(receiver);
+                user.OrderUnits(receiver.transform.position, list, list2);
+            }
+        }
+    }
+    public void TakeDamage(GameObject attacker)
+    {
+        if (Health - attacker.GetComponent<Unit>().Damage > 0)
+        {
+            Health -= attacker.GetComponent<Unit>().Damage;
+        }
+        else
+        {
+            Die();
+        }
+      
+    }
+    public void Die()
+    {
+        Debug.Log("Enemy has been killed");
+        moveTiles.Clear();
+        targets.Clear();
+        GameObject.Destroy(this.gameObject);
     }
 }
 public enum unit_Type
