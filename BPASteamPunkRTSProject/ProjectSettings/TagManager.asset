@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - ui_tab_button
+  - Slider
+  - graphics_settings_arrow
+  - greening_up_panel
+  - Unit
   layers:
   - Default
   - TransparentFX

@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class UnitSavOBJ 
 {
-    public string name;
+    public UnitType Indentifier;
+    public float IntervalBetweenFiring;
+    public string nameAsString;
     public float moveSpeed;
     public float Health;
     public float MaxHealth ;
     public float Damage ;
     public float Range ;
-    public unit_Type _Type;
+    public Ability Ability;
 }

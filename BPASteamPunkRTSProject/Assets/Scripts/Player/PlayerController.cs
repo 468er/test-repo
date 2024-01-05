@@ -15,10 +15,16 @@ public class PlayerController : MonoBehaviour
     public GameManager gameManager;
     public  List<GameObject> movetiles2 = new List<GameObject>();
     public List<ONETWOTHREE> moveOrders = new List<ONETWOTHREE>();
+    public List<GameObject> Units = new List<GameObject>();
+    public GameObject[] UnitsArr;
     // Start is called before the first frame update
-    void Start()
+     public async void Load()
     {
-
+        UnitsArr = GameObject.FindGameObjectsWithTag("Unit");
+        foreach(GameObject unit in UnitsArr)
+        {
+            unit.GetComponent<UnitUnpackager>().Load();
+        }
     }
    
     // Update is called once per frame

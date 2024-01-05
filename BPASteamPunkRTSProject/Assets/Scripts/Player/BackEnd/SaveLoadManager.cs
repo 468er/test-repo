@@ -23,7 +23,7 @@ public class SaveLoadManager : MonoBehaviour
     //        obj.Damage = unit.Damage;
     //        obj.Range = unit.Range;
     //        obj.Health = unit.Health;
-    //        obj._Type = unit._Type;
+    //        obj.Ability = unit.Ability;
     //        UnitsAfter.Add(obj);
     //    }
     //    //UnitSaveObject a = new UnitSaveObject(player.GetComponent<SpriteRenderer>().color, player.transform.position);
@@ -41,13 +41,15 @@ public class SaveLoadManager : MonoBehaviour
         foreach(Unit unit in Units)
         {
             UnitSavOBJ obj = new UnitSavOBJ();
-            obj.name = unit.name;
+            obj.Indentifier = unit.Indentifier;
+            obj.IntervalBetweenFiring = unit.IntervalBetweenFiring;
+            obj.nameAsString = unit.nameAsString;
             obj.MaxHealth = unit.MaxHealth;
             obj.moveSpeed = unit.moveSpeed;
             obj.Damage = unit.Damage;
             obj.Range = unit.Range;
             obj.Health = unit.Health;
-            obj._Type = unit._Type;
+            obj.Ability = unit.Ability;
             UnitsAfter.Add(obj);
         }
         //UnitSaveObject a = new UnitSaveObject(player.GetComponent<SpriteRenderer>().color, player.transform.position);

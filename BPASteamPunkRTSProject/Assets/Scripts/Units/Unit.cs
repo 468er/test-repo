@@ -3,13 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 public class Unit : MonoBehaviour
 {
-    public string name;
+    public UnitType Indentifier;
+    public string nameAsString;
+    public float IntervalBetweenFiring;
     public float moveSpeed = 5f;
     public float Health = 10;
     public float MaxHealth = 10;
     public float Damage = 10;
     public float Range = 10;
-    public unit_Type _Type;
+    public Ability Ability;
 
     
     public int[] position = new int[] { 0, 0, 0 };
@@ -170,7 +172,7 @@ public class Unit : MonoBehaviour
         GameObject.Destroy(this.gameObject);
     }
 }
-public enum unit_Type
+public enum Ability
 {
     soldier,
     
