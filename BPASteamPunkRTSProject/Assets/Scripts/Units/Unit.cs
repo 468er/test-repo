@@ -3,14 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 public class Unit : MonoBehaviour
 {
-    public int[] position = new int[] { 0, 0, 0 };
-    public Vector3 positionAsVector3;
-    public List<TileInMemory> moveTiles = new List<TileInMemory>();
-    public bool moving = false;
-    public Coroutine movingRoutine;
-    public TileInMemory lastTile;
-    public GameObject transporter = null;
-
+    public string name;
     public float moveSpeed = 5f;
     public float Health = 10;
     public float MaxHealth = 10;
@@ -18,6 +11,17 @@ public class Unit : MonoBehaviour
     public float Range = 10;
     public unit_Type _Type;
 
+    
+    public int[] position = new int[] { 0, 0, 0 };
+    public Vector3 positionAsVector3;
+    public List<TileInMemory> moveTiles = new List<TileInMemory>();
+    public bool moving = false;
+    public TileInMemory lastTile;
+
+    public Coroutine movingRoutine;
+    public GameObject transporter = null;
+
+    
     public bool isEnemy = false;
     public PlayerController user;
     public List<GameObject> targets = new List<GameObject>();
