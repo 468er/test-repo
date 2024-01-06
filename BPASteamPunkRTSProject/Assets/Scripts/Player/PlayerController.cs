@@ -16,7 +16,11 @@ public class PlayerController : MonoBehaviour
     public  List<GameObject> movetiles2 = new List<GameObject>();
     public List<ONETWOTHREE> moveOrders = new List<ONETWOTHREE>();
     public List<GameObject> Units = new List<GameObject>();
-    public GameObject[] UnitsArr;
+    public GameObject[] UnitsArr;  
+    public List<GameObject> Buildings = new List<GameObject>();
+    public GameObject[] BuildingsArr;    
+    public List<GameObject> ResourcDeps = new List<GameObject>();
+    public GameObject[] ResourceDepsArr;
     // Start is called before the first frame update
      public async void Load()
     {
@@ -24,6 +28,16 @@ public class PlayerController : MonoBehaviour
         foreach(GameObject unit in UnitsArr)
         {
             unit.GetComponent<UnitUnpackager>().Load();
+        }
+        BuildingsArr = GameObject.FindGameObjectsWithTag("Building");
+        foreach (GameObject unit in BuildingsArr)
+        {
+            unit.GetComponent<BuildingUnpackager>().Load();
+        } 
+        ResourceDepsArr = GameObject.FindGameObjectsWithTag("ResourceDep");
+        foreach (GameObject unit in ResourceDepsArr)
+        {
+            unit.GetComponent<ResourceUnpacker>().Load();
         }
     }
    

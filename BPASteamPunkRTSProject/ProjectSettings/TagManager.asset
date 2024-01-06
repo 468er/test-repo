@@ -9,6 +9,8 @@ TagManager:
   - graphics_settings_arrow
   - greening_up_panel
   - Unit
+  - Building
+  - ResourceDep
   layers:
   - Default
   - TransparentFX
