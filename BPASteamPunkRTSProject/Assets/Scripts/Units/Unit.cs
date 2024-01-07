@@ -43,7 +43,7 @@ public class Unit : MonoBehaviour
             {
 
                 int a = 0;
-                if (Vector2.Distance(transform.position, map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position) > 1)
+                if (Vector2.Distance(transform.position, map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position) >= 2)
                 {
                     transform.position = map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position;
                 }

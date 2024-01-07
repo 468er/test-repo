@@ -11,6 +11,7 @@ TagManager:
   - Unit
   - Building
   - ResourceDep
+  - Tile
   layers:
   - Default
   - TransparentFX

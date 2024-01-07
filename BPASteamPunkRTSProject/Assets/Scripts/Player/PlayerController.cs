@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     public GameObject[] BuildingsArr;    
     public List<GameObject> ResourcDeps = new List<GameObject>();
     public GameObject[] ResourceDepsArr;
+    string debugString;
     // Start is called before the first frame update
      public async void Load()
     {
@@ -306,6 +307,7 @@ public class PlayerController : MonoBehaviour
         //store all of these in an array and 
         while (endLoopConditions == false)
         {
+            Vector3 PrevPosAsVector3 = new Vector3(prevPosition[0], prevPosition[1], prevPosition[2]);
             //start of new code for multiple tunnels
             int numToSubtractForAllTileLayersNeeded = destinationTile[2] - position[2];
             //this finds all the layers in tunnels
@@ -448,14 +450,33 @@ public class PlayerController : MonoBehaviour
             if (prevPosition != null)
             {
 
+                //special case for when the current position is on a tile that is a tunnel tile. There is n + 1 hexes to go to because there is the choice of
+                //going through the tunnel. This code checks for that, and does one thing if it's a tunnel that goes to a different layer, and another 
+                //if it's a tunnel that goes to the same layer.
                 if (position[2] != destination.z)
                 {
                     Tile currentTile = map[position[0], position[1], position[2]].GetComponent<Tile>();
                     TunnelInMemory tunnel = ReOrganized.Find(x => x.Entrance == map[position[0], position[1], position[2]].GetComponent<Tile>());
                     if (tunnel != null)
                     {
+
                         storedTiles.Add(new TileInMemory(tunnel.length, tunnel.distanceFromDestination, tunnel.Entrance.position, tunnel.Exit.position[0], tunnel.Exit.position[1], tunnel.Exit.position[2], 0));
 
+                    }
+                    
+                }
+                Tile TileOnRightNow = map[position[0], position[1], position[2]].GetComponent<Tile>();
+                if(TileOnRightNow.Tunnel != 0)
+                {
+                    Tunnel tunnel = gameManager.Tunnels.Find(x => x.id == TileOnRightNow.Tunnel);
+                    foreach(Tile tile in tunnel.Tiles)
+                    {
+                        //if potential tiles doesn't contain the tile
+                        TileInMemory testingPT = potentialTiles.Find(x => x.locationAsVector3 == tile.positionAsVector3);
+                        if(tile != TileOnRightNow && testingPT == null)
+                        {
+                            storedTiles.Add( new TileInMemory(1, Vector2.Distance(destinationAsRealPosition, tile.transform.position), position, tile.position[0], tile.position[1], tile.position[2], 0));
+                        }
                     }
                 }
                 foreach (TileInMemory tile in theTiles)
@@ -475,6 +496,8 @@ public class PlayerController : MonoBehaviour
                             {
                                 if (Mathf.Abs(destination.z - position[2]) > 1)
                                 {
+                                    print("Destination layer was found to be greater than one than current position");
+
                                     int multiplicity = ((int)destination.z - position[2]) / (Mathf.Abs((int)destination.z - position[2]));
                                     List<Tile> entrancetiles = new List<Tile>();
                                     List<List<TileInMemory>> list = new List<List<TileInMemory>>();
@@ -483,6 +506,7 @@ public class PlayerController : MonoBehaviour
                                     foreach (Tunnel item in gameManager.Tunnels)
                                     {
                                         //if the tunnel contains a tile that leads to the exit layer
+                                        //DOESN'T TOUCH 1 LAYER TUNNELS!
                                         if (item.layers.Contains(Mathf.RoundToInt(position[2] + (multiplicity))))
                                         {
                                             //if the tunnel contains a tile that leads to entrance layer
@@ -521,6 +545,8 @@ public class PlayerController : MonoBehaviour
                                 }
                                 else
                                 {
+                                    print("Destination layer NOT found to be greater than one than current position");
+
                                     List<Tile> entrancetiles = new List<Tile>();
                                     List<List<TileInMemory>> list = new List<List<TileInMemory>>();
                                     List<Tile> exits = new List<Tile>();
@@ -593,6 +619,7 @@ public class PlayerController : MonoBehaviour
                         {
                             if (Mathf.Abs(destination.z - position[2]) > 1)
                             {
+                                print("Destination layer was found to be greater than one than current position");
                                 int multiplicity = ((int)destination.z - position[2]) / (Mathf.Abs((int)destination.z - position[2]));
                                 List<Tile> entrancetiles = new List<Tile>();
                                 List<List<TileInMemory>> list = new List<List<TileInMemory>>();
@@ -637,6 +664,7 @@ public class PlayerController : MonoBehaviour
                             }
                             else
                             {
+
                                 List<Tile> entrancetiles = new List<Tile>();
                                 List<List<TileInMemory>> list = new List<List<TileInMemory>>();
                                 List<Tile> exits = new List<Tile>();
@@ -761,21 +789,14 @@ public class PlayerController : MonoBehaviour
     {
         LT_G3_U returnvar; 
         List<TileInMemory> movetiles = new List<TileInMemory>();
-
-        movetiles.Add(potentialTiles[potentialTiles.Count - 1]);
-        while (movetiles[movetiles.Count - 1].filllocationAsVector3 != potentialTiles[0].filllocationAsVector3)
-        {
             //movetiles.Add(potentialTiles.Find(x => x.locationAsArr == movetiles[movetiles.Count-1].fillLocation));
             foreach (TileInMemory tile in potentialTiles)
             {
-                if (tile.locationAsVector3 == movetiles[movetiles.Count - 1].filllocationAsVector3)
-                {
+            
                     //if()
                     movetiles.Add(tile);
-                }
+                
             }
-        }
-        movetiles.Reverse();
         foreach( TileInMemory tile in movetiles)
         {
             movetiles2.Add(map[(int)tile.locationAsVector3.x, (int)tile.locationAsVector3.y, (int)tile.locationAsVector3.z]);
