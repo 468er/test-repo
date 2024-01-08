@@ -477,6 +477,7 @@ public class PlayerController : MonoBehaviour
                         {
                             storedTiles.Add( new TileInMemory(1, Vector2.Distance(destinationAsRealPosition, tile.transform.position), position, tile.position[0], tile.position[1], tile.position[2], 0));
                         }
+
                     }
                 }
                 foreach (TileInMemory tile in theTiles)
@@ -789,14 +790,21 @@ public class PlayerController : MonoBehaviour
     {
         LT_G3_U returnvar; 
         List<TileInMemory> movetiles = new List<TileInMemory>();
-            //movetiles.Add(potentialTiles.Find(x => x.locationAsArr == movetiles[movetiles.Count-1].fillLocation));
-            foreach (TileInMemory tile in potentialTiles)
-            {
-            
-                    //if()
-                    movetiles.Add(tile);
-                
-            }
+
+        movetiles.Add(potentialTiles[potentialTiles.Count - 1]);
+        while (movetiles[movetiles.Count - 1].filllocationAsVector3 != potentialTiles[0].filllocationAsVector3)
+        {
+            movetiles.Add(potentialTiles.Find(x => x.locationAsVector3 == movetiles[movetiles.Count - 1].filllocationAsVector3));
+            //foreach (TileInMemory tile in potentialTiles)
+            //{
+            //    if (tile.locationAsVector3 == movetiles[movetiles.Count - 1].filllocationAsVector3)
+            //    {
+            //        //if()
+            //        movetiles.Add(tile);
+            //    }
+            //}
+        }
+        movetiles.Reverse();
         foreach( TileInMemory tile in movetiles)
         {
             movetiles2.Add(map[(int)tile.locationAsVector3.x, (int)tile.locationAsVector3.y, (int)tile.locationAsVector3.z]);
