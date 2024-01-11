@@ -37,24 +37,32 @@ public class Unit : MonoBehaviour
     // Update is called once per frame
     public void Update()
     {
+        //If there are tiles to move to
         if(moveTiles.Count > 0) 
         {
+            //idk why I did a second check
             if (0 < moveTiles.Count)
             {
-
+                //Tunnels work by merely ordering the Unit to go to the exit tile. All tiles are 1 meter away from each other. Thus, checking if the distance
+                //is equal or greater to 2, and then simply teleporting the unit to the tile if that's true, creates an instance which is only used for tunnel functionality.
                 int a = 0;
+                Tile CurrentTile = map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].GetComponent<Tile>();
                 if (Vector2.Distance(transform.position, map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position) >= 2)
                 {
                     transform.position = map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position;
                 }
                 else
                 {
+                    //if current position != the position of the next tile to move to
                     if (transform.position != map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position)
                     {
                         transform.position = Vector3.MoveTowards(transform.position, map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position, moveSpeed * Time.deltaTime);
                     }
                     else
                     {
+                        //if the current position = the next tile to move to (also the tile currently on, now).
+
+                        CurrentTile.Ability(this);
                         position = new int[] { moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer };
                         positionAsVector3 = new Vector3(moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer);
                         lastTile = moveTiles[a];

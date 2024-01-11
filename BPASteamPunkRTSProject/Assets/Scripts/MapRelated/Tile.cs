@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+using System.Collections.Generic;
+
 public class Tile : MonoBehaviour
 {
     public TileType TypeOfTile;
@@ -13,6 +15,9 @@ public class Tile : MonoBehaviour
     public GameManager gameManager;
     public GameObject TunnelMarker;
     public GameObject Canvas;
+    public List<GameObject> SpawnPool = new List<GameObject>();
+    public float fireInterval;
+    public float lastfired;
     public void IsTunnel(int i, GameManager gameManager)
     {
         //make it visible it's a tunnel
@@ -77,6 +82,7 @@ public class Tile : MonoBehaviour
             case TileType.SpawnTrigger:
                 {
                     Moveable = true;
+                    fireInterval = 0 ;
                     GetComponent<SpriteRenderer>().color = Color.magenta;
                     break;
                 }
@@ -100,9 +106,61 @@ public class Tile : MonoBehaviour
                 }
         }
     }
-    public void SpawnUnits()
+    public void Ability(Unit triggerUnit)
     {
+        switch (TypeOfTile)
+        {
+            case TileType.wall:
+                {
+                  
+                    break;
+                }
+            case TileType.MagmaPool:
+                {
 
+                    break;
+                }
+            case TileType.SpawnTrigger:
+                {
+                    if(lastfired + fireInterval <= Time.time)
+                    {
+                        Spawner.SpawnUnits(triggerUnit);
+                        lastfired = Time.time;
+                        fireInterval = float.PositiveInfinity;
+                    }
+                   
+                    break;
+                }
+            case TileType.Lava:
+                {
+                  
+                    break;
+                }
+            case TileType.nothing:
+                {
+
+                    break;
+                }
+            case TileType.Tunnel:
+                {
+                 
+                    break;
+                }
+        }
+    }
+    public void SpawnUnits(Unit unit)
+    {
+        int amount = 3;
+        List<GameObject> Wave = new List<GameObject>();
+        for(int i = 0; i < amount; i++)
+        {
+            Wave.Add(gameManager.SpawnPool[(int)Random.Range(0, gameManager.SpawnPool.Count - 1)]);
+        }
+        foreach(GameObject enemy in Wave)
+        {
+           GameObject spawn = Instantiate(enemy);
+            spawn.GetComponent<Unit>().targets.Add(unit.gameObject);
+        }
     }
 }
     

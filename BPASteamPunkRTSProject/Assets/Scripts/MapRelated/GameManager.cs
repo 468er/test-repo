@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] allLayers;
     public PlayerController Player1;
     public List<Tunnel> Tunnels = new List<Tunnel>();
-
+    public List<GameObject> SpawnPool = new List<GameObject>();
     public bool is_on_button_1 { get; internal set; }
     public bool is_on_button_2 { get; internal set; }
     public bool is_on_button_4 { get; internal set; }
@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
         //map[2, 2, 1].GetComponent<Tile>().IsTunnel(1, this);
         //map[4, 4, 1].GetComponent<Tile>().IsTunnel(2, this);
         //map[4, 4, 2].GetComponent<Tile>().IsTunnel(2, this);
-        //Player1.map = map;
+        Player1.map = map;
     }
 
     // Update is called once per frame
