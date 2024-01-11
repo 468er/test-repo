@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using TMPro;
 public class Tile : MonoBehaviour
 {
     public TileType TypeOfTile;
@@ -11,6 +11,8 @@ public class Tile : MonoBehaviour
     //if 0 is not a spawner;
     public Tile Spawner;
     public GameManager gameManager;
+    public GameObject TunnelMarker;
+    public GameObject Canvas;
     public void IsTunnel(int i, GameManager gameManager)
     {
         //make it visible it's a tunnel
@@ -43,6 +45,10 @@ public class Tile : MonoBehaviour
             
             gameManager.Tunnels.Add(new Tunnel(i, this));
         }
+        //Instantiates a text ui element that tracks the tunnel and displays the tunnel's ID number. Originally for developmenet purposes.
+        GameObject TMarker = Instantiate(TunnelMarker, Canvas.transform);
+        TMarker.GetComponent<UIToWorldPointUpdater>().ParentTile = this.gameObject;
+        TMarker.GetComponent<TextMeshProUGUI>().text = i.ToString();
     }
      public void IsTunnelExit(Tile tile, float distance)
     {

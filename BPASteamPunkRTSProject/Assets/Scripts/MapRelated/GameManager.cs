@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
         //        for (int b = 0; b < y; b++)
         //        {
         //            GameObject newObj = Instantiate(tile, new Vector3(a + -1 * (((float)b / 2f) - (int)(b / 2)), b * 0.86602540378443864676372317075294f, 0), Quaternion.identity, newLayer.transform);
-        //            map[a, b, w] = (newObj);
+        //            map[a, b, w] = newObj;
         //            newObj.name = "" + a + b + w;
         //            newObj.GetComponent<Tile>().position = new int[] { a, b, w };
         //        }
@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
         //map[2, 2, 1].GetComponent<Tile>().IsTunnel(1, this);
         //map[4, 4, 1].GetComponent<Tile>().IsTunnel(2, this);
         //map[4, 4, 2].GetComponent<Tile>().IsTunnel(2, this);
-        Player1.map = map;
+        //Player1.map = map;
     }
 
     // Update is called once per frame
