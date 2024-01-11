@@ -7,5 +7,5 @@ public enum UnitType
    KillerAnt,
    Sniper,    
    Bomber,
-
+   EnemyMedium,
 }

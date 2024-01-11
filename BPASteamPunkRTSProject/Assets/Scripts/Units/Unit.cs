@@ -15,6 +15,7 @@ public class Unit : MonoBehaviour
 
     
     public int[] position = new int[] { 0, 0, 0 };
+    public float lastFired;
     public Vector3 positionAsVector3;
     public List<TileInMemory> moveTiles = new List<TileInMemory>();
     public bool moving = false;
@@ -33,12 +34,13 @@ public class Unit : MonoBehaviour
     public void Start()
     {
         positionAsVector3 = new Vector3(position[0], position[1], position[2]);
+        user = GameObject.Find("Player1").GetComponent<PlayerController>();
+        lastFired = Time.time;
     }
     // Update is called once per frame
     public void Update()
     {
-        if(moveTiles.Count > 0) 
-        {
+        
             if (0 < moveTiles.Count)
             {
 
@@ -49,16 +51,22 @@ public class Unit : MonoBehaviour
                 }
                 else
                 {
+                    Tile CurrentTile = map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].GetComponent<Tile>();
                     if (transform.position != map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position)
                     {
                         transform.position = Vector3.MoveTowards(transform.position, map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position, moveSpeed * Time.deltaTime);
                     }
                     else
                     {
+                        CurrentTile.Ability(this);
                         position = new int[] { moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer };
                         positionAsVector3 = new Vector3(moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer);
                         lastTile = moveTiles[a];
                         moveTiles.Remove(moveTiles[a]);
+                        if(moveTiles.Count == 0)
+                        {
+                        moving = false;
+                        }
                     }
                 }
             }
@@ -74,11 +82,7 @@ public class Unit : MonoBehaviour
             {
                 Attack(obj, true);
             }
-        }
-        else
-        {
-            moving = false;
-        }
+        
     }
     public void MoveOverTime(List<TileInMemory> MoveList, GameObject[,,] Map, Unit unit)
     {
@@ -131,10 +135,11 @@ public class Unit : MonoBehaviour
         moving = false;
         return LastTile;
     }
-    public void Attack(GameObject receiver, bool moving)
+    public void Attack(GameObject receiver, bool idk)
     {
-        if (Vector2.Distance(this.transform.position, receiver.transform.position) <= Range)
+        if (Vector2.Distance(this.transform.position, receiver.transform.position) <= Range && lastFired + IntervalBetweenFiring <= Time.time)
         {
+            lastFired = Time.time;
             receiver.GetComponent<Unit>().TakeDamage(this.gameObject);
         }
         else
@@ -146,7 +151,10 @@ public class Unit : MonoBehaviour
                 List<GameObject> list2 = new List<GameObject>();
                 list2.Add(this.gameObject);
                 StopAfterTargetDeaths = true;
-                targets.Add(receiver);
+                if (!targets.Contains(receiver))
+                {
+                    targets.Add(receiver);
+                }
                 user.OrderUnits(receiver.transform.position, list, list2);
             }
         }

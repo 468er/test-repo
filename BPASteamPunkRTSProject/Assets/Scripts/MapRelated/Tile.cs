@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using System.Collections.Generic;
 public class Tile : MonoBehaviour
 {
     public TileType TypeOfTile;
@@ -11,6 +11,8 @@ public class Tile : MonoBehaviour
     //if 0 is not a spawner;
     public Tile Spawner;
     public GameManager gameManager;
+    public float lastfired;
+    public float fireInterval = 0;
     public void IsTunnel(int i, GameManager gameManager)
     {
         //make it visible it's a tunnel
@@ -20,9 +22,9 @@ public class Tile : MonoBehaviour
         //set the bool to false to default becuase we check below
         bool GcontainsThisTunnel = false;
         //check each tunnel in game manager, if it contains a tunnel with the same id as this tile then there's no need to do anything and we set to true
-        foreach(Tunnel item in gameManager.Tunnels)
+        foreach (Tunnel item in gameManager.Tunnels)
         {
-            if(item.id == i)
+            if (item.id == i)
             {
                 GcontainsThisTunnel = true;
             }
@@ -40,11 +42,11 @@ public class Tile : MonoBehaviour
         }
         else
         {
-            
+
             gameManager.Tunnels.Add(new Tunnel(i, this));
         }
     }
-     public void IsTunnelExit(Tile tile, float distance)
+    public void IsTunnelExit(Tile tile, float distance)
     {
         Moveable = tile.Moveable;
         position = tile.position;
@@ -57,17 +59,17 @@ public class Tile : MonoBehaviour
         switch (TypeOfTile)
         {
             case TileType.wall:
-            {
+                {
                     Moveable = false;
                     GetComponent<SpriteRenderer>().color = new Color(0, 0, 0);
                     break;
-            }
+                }
             case TileType.MagmaPool:
-            {
+                {
                     Moveable = false;
                     GetComponent<SpriteRenderer>().color = Color.red;
                     break;
-            }
+                }
             case TileType.SpawnTrigger:
                 {
                     Moveable = true;
@@ -94,18 +96,69 @@ public class Tile : MonoBehaviour
                 }
         }
     }
-    public void SpawnUnits()
+
+    public void Ability(Unit triggerUnit)
     {
+        switch (TypeOfTile)
+        {
+            case TileType.wall:
+                {
+                    break;
+                }
+            case TileType.MagmaPool:
+                {
+                    break;
+                }
+            case TileType.SpawnTrigger:
+                {
+                    if(lastfired + fireInterval < Time.time)
+                    {
+                        Spawner.SpawnUnits(triggerUnit);
+                        fireInterval = float.PositiveInfinity;
+                    }
+                    break;
+                }
+            case TileType.Lava:
+                {
+                    break;
+                }
+            case TileType.nothing:
+                {
+
+                    break;
+                }
+            case TileType.Tunnel:
+                {
+
+                    break;
+                }
+        }
 
     }
+    public void SpawnUnits(Unit unit)
+    {
+        int amount = 3;
+        List<GameObject> Wave = new List<GameObject>();
+        for(int i = 0; i < amount; i++)
+        {
+            Wave.Add(gameManager.SpawnPool[(int)Random.Range(0, gameManager.SpawnPool.Count - 1)]);
+        }
+        foreach( GameObject enemy in Wave)
+        {
+            GameObject instantiated = Instantiate(enemy, transform.position, Quaternion.identity);
+            instantiated.GetComponent<Unit>().position = position;
+            instantiated.GetComponent<Unit>().targets.Add(unit.gameObject); 
+        }
+    }
+
 }
-    
-public enum TileType
-{
-    wall,
-    MagmaPool,
-    SpawnTrigger,
-    Lava,
-    nothing,
-    Tunnel,
-}
+    public enum TileType
+    {
+        wall,
+        MagmaPool,
+        SpawnTrigger,
+        Lava,
+        nothing,
+        Tunnel,
+    }
+
