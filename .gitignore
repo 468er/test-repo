@@ -5,6 +5,7 @@
 [Bb]uild/
 [Ll]ibrary/
 [Ll]ocal[Cc]ache/
+[Ll]ogs/
 [Oo]bj/
 [Tt]emp/
 [Uu]nityGenerated/
@@ -46,5 +47,5 @@ BPASteamPunkRTSProject/Logs/shadercompiler-AssetImportWorker0.log
 BPASteamPunkRTSProject/Logs/AssetImportWorker0.log
 BPASteamPunkRTSProject/Logs/AssetImportWorker1.log
 BPASteamPunkRTSProject/Logs/shadercompiler-AssetImportWorker0.log
-*.dwlt
-*.dwlt
+BPASteamPunkRTSProject/.vs/BPASteamPunkRTSProject/FileContentIndex/09f2bd28-9d6f-45c7-9f2e-4cd877825daa.vsidx
+*.log

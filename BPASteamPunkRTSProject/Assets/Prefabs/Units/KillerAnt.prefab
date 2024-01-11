@@ -103,7 +103,7 @@ MonoBehaviour:
   Indentifier: 0
   nameAsString: KillerAnt
   IntervalBetweenFiring: 1
-  moveSpeed: 5
+  moveSpeed: 1
   Health: 10
   MaxHealth: 10
   Damage: 10
