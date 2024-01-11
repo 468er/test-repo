@@ -169,7 +169,6 @@ public class PlayerController : MonoBehaviour
     {
         if(Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButtonDown(1))
         {
-            
             var hits = Physics2D.RaycastAll(new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y), new Vector2(0, 0));
             List<GameObject> hitsToGOBJ = new List<GameObject>();
             for (int i = 0; i < hits.Length; i++)

@@ -1,6 +1,9 @@
 using UnityEngine;
+<<<<<<< HEAD
 using TMPro;
 using System.Collections.Generic;
+=======
+>>>>>>> parent of ae10b88 (Added tunnel number in UI)
 
 public class Tile : MonoBehaviour
 {
@@ -13,11 +16,14 @@ public class Tile : MonoBehaviour
     //if 0 is not a spawner;
     public Tile Spawner;
     public GameManager gameManager;
+<<<<<<< HEAD
     public GameObject TunnelMarker;
     public GameObject Canvas;
     public List<GameObject> SpawnPool = new List<GameObject>();
     public float fireInterval;
     public float lastfired;
+=======
+>>>>>>> parent of ae10b88 (Added tunnel number in UI)
     public void IsTunnel(int i, GameManager gameManager)
     {
         //make it visible it's a tunnel
@@ -50,10 +56,6 @@ public class Tile : MonoBehaviour
             
             gameManager.Tunnels.Add(new Tunnel(i, this));
         }
-        //Instantiates a text ui element that tracks the tunnel and displays the tunnel's ID number. Originally for developmenet purposes.
-        GameObject TMarker = Instantiate(TunnelMarker, Canvas.transform);
-        TMarker.GetComponent<UIToWorldPointUpdater>().ParentTile = this.gameObject;
-        TMarker.GetComponent<TextMeshProUGUI>().text = i.ToString();
     }
      public void IsTunnelExit(Tile tile, float distance)
     {
