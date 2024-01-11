@@ -102,12 +102,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Indentifier: 1
   nameAsString: Sniper
-  IntervalBetweenFiring: 1
-  moveSpeed: 2.51
-  Health: 13.52
-  MaxHealth: 14.63
-  Damage: 7.13
-  Range: 4.42
+  IntervalBetweenFiring: 5
+  moveSpeed: 0.2
+  Health: 10
+  MaxHealth: 10
+  Damage: 50
+  Range: 5
   Ability: 0
   position: 000000000000000000000000
   positionAsVector3: {x: 0, y: 0, z: 0}
