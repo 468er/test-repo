@@ -126,7 +126,6 @@ public class Unit : MonoBehaviour
     }
     public TileInMemory ClearForMovement()
     {
-        StopCoroutine(movingRoutine);
         TileInMemory LastTile = lastTile;
         moveTiles.Clear();
         moving = false;
