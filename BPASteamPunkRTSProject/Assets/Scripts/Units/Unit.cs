@@ -11,7 +11,7 @@ public class Unit : MonoBehaviour
     public float MaxHealth = 10;
     public float Damage = 10;
     public float Range = 10;
-    public Ability Ability;
+    public Ability ability;
 
     
     public int[] position = new int[] { 0, 0, 0 };
@@ -30,6 +30,7 @@ public class Unit : MonoBehaviour
     public List<GameObject> targets = new List<GameObject>();
     public bool StopAfterTargetDeaths;
     public GameObject[,,] map;
+    public bool inRange = false;
     // Start is called before the first frame update
     public void Start()
     {
@@ -41,7 +42,7 @@ public class Unit : MonoBehaviour
     public void Update()
     {
         
-            if (0 < moveTiles.Count)
+            if (0 < moveTiles.Count && inRange)
             {
 
                 int a = 0;
@@ -80,7 +81,8 @@ public class Unit : MonoBehaviour
             }
             foreach (GameObject obj in targets)
             {
-                Attack(obj, true);
+
+            UseAbility(obj, true);
             }
         
     }
@@ -135,35 +137,80 @@ public class Unit : MonoBehaviour
         moving = false;
         return LastTile;
     }
+    public void BecomeBuilding(GameObject buildingPrefab)
+    {
+        GameObject building = Instantiate(buildingPrefab, this.transform.position, Quaternion.identity);
+        BuildingUnpackager building1 = building.GetComponent<BuildingUnpackager>();
+        building1.Load();
+        Destroy(this.gameObject);
+    }
+    public void UseAbility(GameObject receiver, bool idk)
+    {
+        switch (ability)
+        {
+            case Ability.soldier:
+                Attack(receiver, idk);
+                break;
+            case Ability.Worker:
+                Mine(receiver, idk);
+                break;
+        }
+    }
     public void Attack(GameObject receiver, bool idk)
     {
-        if (Vector2.Distance(this.transform.position, receiver.transform.position) <= Range && lastFired + IntervalBetweenFiring <= Time.time)
+        if (!targets.Contains(receiver))
         {
-            lastFired = Time.time;
-            receiver.GetComponent<Unit>().TakeDamage(this.gameObject);
+            targets.Add(receiver);
+        }
+        if (Vector2.Distance(this.transform.position, receiver.transform.position) <= Range)
+        {
+            if(lastFired + IntervalBetweenFiring <= Time.time)
+            {
+                lastFired = Time.time;
+                switch (receiver.tag)
+                {
+                    case "Unit":
+                        receiver.GetComponent<Unit>().TakeDamage(this.gameObject);
+                        break;
+                    case "ResourceDep":
+                        receiver.GetComponent<ResourceDep>().TakeDamage(this.gameObject);
+                        break;
+                    case "Building":
+                        receiver.GetComponent<Building>().TakeDamage(this.gameObject);
+                        break;
+                }
+            }
+            inRange = true;
         }
         else
         {
-            if(moving == false)
+            inRange = false;
+            if (moving == false)
             {
                 List<GameObject> list = new List<GameObject>();
                 list.Add(receiver);
                 List<GameObject> list2 = new List<GameObject>();
                 list2.Add(this.gameObject);
                 StopAfterTargetDeaths = true;
-                if (!targets.Contains(receiver))
-                {
-                    targets.Add(receiver);
-                }
+               
                 user.OrderUnits(receiver.transform.position, list, list2);
             }
         }
+    }  
+    public void Mine(GameObject receiver, bool idk)
+    {
+        if (receiver.CompareTag("ResourceDep"))
+        {
+            Attack(receiver, idk);
+        }
+       
     }
     public void TakeDamage(GameObject attacker)
     {
         if (Health - attacker.GetComponent<Unit>().Damage > 0)
         {
             Health -= attacker.GetComponent<Unit>().Damage;
+            Debug.Log(attacker.gameObject + " <- Hit ->" + this.gameObject + "for " + attacker.GetComponent<Unit>().Damage + "reducing the health to " + Health);
         }
         else
         {
@@ -179,8 +226,4 @@ public class Unit : MonoBehaviour
         GameObject.Destroy(this.gameObject);
     }
 }
-public enum Ability
-{
-    soldier,
-    
-}
+

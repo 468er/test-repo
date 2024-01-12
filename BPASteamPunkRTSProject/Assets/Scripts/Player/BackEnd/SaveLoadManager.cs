@@ -53,7 +53,7 @@ public class SaveLoadManager : MonoBehaviour
             obj.Damage = unit.Damage;
             obj.Range = unit.Range;
             obj.Health = unit.Health;
-            obj.Ability = unit.Ability;
+            obj.Ability = unit.ability;
             UnitsAfter.Add(obj);
         }
         //UnitSaveObject a = new UnitSaveObject(player.GetComponent<SpriteRenderer>().color, player.transform.position);

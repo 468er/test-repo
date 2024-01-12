@@ -13,6 +13,19 @@ public class Tile : MonoBehaviour
     public GameManager gameManager;
     public float lastfired;
     public float fireInterval = 0;
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log(this.gameObject + "collided with " + collision);
+        switch(collision.transform.tag)
+        {
+            case "Building":
+                Moveable = false;
+                break; 
+            case "ResourceDep":
+                Moveable = false;
+                break;
+        }
+    }
     public void IsTunnel(int i, GameManager gameManager)
     {
         //make it visible it's a tunnel
@@ -53,6 +66,7 @@ public class Tile : MonoBehaviour
         distancefromExit = distance;
     }
     // Start is called before the first frame update
+
     public void Initialize()
     {
         positionAsVector3 = new Vector3(position[0], position[1], position[2]);
@@ -92,6 +106,8 @@ public class Tile : MonoBehaviour
                 {
                     Moveable = true;
                     IsTunnel(Tunnel, gameManager);
+                    GameObject gameObject = Instantiate(gameManager.tilenNumberPrefab);
+                    gameObject.GetComponent<UIToWorldPointUpdater>().ParentTile = this.gameObject;
                     break;
                 }
         }

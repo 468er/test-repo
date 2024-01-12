@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Pathing : MonoBehaviour
 {
-    public int[] position;
+    public int[] position = new int[] { 0, 0, 0 };
     void Update()
     {
         Unit unit = GetComponent<Unit>();
@@ -16,6 +16,13 @@ public class Pathing : MonoBehaviour
         if (tile != null)
         {
             position = tile.position;
+        }
+        if(tile == null && unit == null)
+        {
+            if (MappingTools.WorldPositionArrayToVector3(position) != transform.position)
+            {
+                position = MappingTools.WorldPositionToPositionArray(transform.position);
+            }
         }
     }
 }

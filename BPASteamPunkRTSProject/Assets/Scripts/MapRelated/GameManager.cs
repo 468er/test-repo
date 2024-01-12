@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     public bool is_on_button_5 { get; internal set; }
     public GameObject Canvas;
     public List<GameObject> SpawnPool = new List<GameObject>();
+    public GameObject tilenNumberPrefab;
     // Start is called before the first frame update
     void Start()
     {

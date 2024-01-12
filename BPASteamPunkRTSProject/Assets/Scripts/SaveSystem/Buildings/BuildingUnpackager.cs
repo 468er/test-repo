@@ -52,6 +52,10 @@ using Newtonsoft.Json;
 }
             }
         }
+        else
+        {
+            GetComponent<Building>().enabled = true;
+        }
     }
 
 

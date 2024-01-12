@@ -53,7 +53,7 @@ public class UnitUnpackager : MonoBehaviour
                     unit.MaxHealth = obj.MaxHealth;
                     unit.Range = obj.Range;
                     unit.moveSpeed = obj.moveSpeed;
-                    unit.Ability = obj.Ability;
+                    unit.ability = obj.Ability;
                     unit.Damage = obj.Damage;
                 }
             }

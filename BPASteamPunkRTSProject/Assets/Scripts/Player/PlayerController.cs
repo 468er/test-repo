@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     public List<GameObject> ResourcDeps = new List<GameObject>();
     public GameObject[] ResourceDepsArr;
     string debugString;
+    public List<GameObject> BuildingPrefabs = new List<GameObject>();
     // Start is called before the first frame update
      public async void Load()
     {
@@ -193,22 +194,49 @@ public class PlayerController : MonoBehaviour
                 {
                     hitsToGOBJ.Add( hits[i].transform.gameObject);
                 }
-                RaycastHit2D[] unit1 = Array.FindAll(hits, x => x.transform.GetComponent<Unit>());
+                RaycastHit2D[] unit1 = Array.FindAll(hits, x => x.transform.GetComponent<Pathing>());
                 //if clicking on unit 
                 if (unit1.Length > 0)
                 {
-                    Unit unit2 = unit1[0].transform.GetComponent<Unit>();
-                    if (unit2.isEnemy)
+                    switch (unit1[0].transform.tag)
                     {
-                        foreach(GameObject unit in selectedUnits)
-                        {
-                            unit.GetComponent<Unit>().Attack(unit2.gameObject, false);
-                        }
-                    }
-                    else
-                    {
+                        case "Unit":
+                            Unit unit2 = unit1[0].transform.GetComponent<Unit>();
+                            if (unit2.isEnemy)
+                            {
+                                foreach (GameObject unit in selectedUnits)
+                                {
+                                    unit.GetComponent<Unit>().UseAbility(unit2.gameObject, false);
+                                }
+                            }
+                            else
+                            {
 
+                            }
+                            break;
+                        case "Building":
+                            Building unit3 = unit1[0].transform.GetComponent<Building>();
+                            if (unit3.isEnemy)
+                            {
+                                foreach (GameObject unit in selectedUnits)
+                                {
+                                    unit.GetComponent<Unit>().UseAbility(unit3.gameObject, false);
+                                }
+                            }
+                            else
+                            {
+
+                            }
+                            break;
+                        case "ResourceDep":
+                            ResourceDep unit4 = unit1[0].transform.GetComponent<ResourceDep>();
+                            foreach (GameObject unit in selectedUnits)
+                            {
+                                    unit.GetComponent<Unit>().UseAbility(unit4.gameObject, false);
+                            }
+                            break;
                     }
+                    
                 }
                 else
                 {
@@ -907,6 +935,13 @@ public class PlayerController : MonoBehaviour
             //Vector3 movement = PreviousPos - selectPos;
             //Camera.FindObjectOfType<Camera>().transform.position += (movement * Inverse) * MapMoveSens;
             //PreviousPos = selectPos + (movement * Inverse);
+        }
+    }
+    public void UnitsBecomeBuildings()
+    {
+        foreach(GameObject unit in selectedUnits)
+        {
+            unit.GetComponent<Unit>().BecomeBuilding(BuildingPrefabs[0]);
         }
     }
 }

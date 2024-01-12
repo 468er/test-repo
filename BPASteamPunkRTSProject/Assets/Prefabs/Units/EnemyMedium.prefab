@@ -102,21 +102,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Indentifier: 3
   nameAsString: EnemyMedium
-  IntervalBetweenFiring: 1
+  IntervalBetweenFiring: 100
   moveSpeed: 1
   Health: 10
   MaxHealth: 10
-  Damage: 10
+  Damage: 0.1
   Range: 1
   Ability: 0
   position: 000000000000000000000000
+  lastFired: 0
   positionAsVector3: {x: 0, y: 0, z: 0}
   moving: 0
   transporter: {fileID: 0}
   isEnemy: 1
   user: {fileID: 0}
   targets:
-  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
