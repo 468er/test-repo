@@ -9,12 +9,29 @@ public class Building : MonoBehaviour
     public float Health = 10;
     public  building_Type _type;
     public bool isEnemy;
+    public float FireInterval;
+    public float lastFired;
+    public GameObject manufacturedObject;
     //will block of squares by using the collider2dtrigger method. Without having to do any checking, it will automatically hit every square where it is blocking the majority of the square and 
     //turn off moving in that square.
 
     private void Update()
     {
-       
+        switch (_type)
+        {
+            case building_Type.factory:
+                Manufacture();
+                break;
+        }
+    }
+    public void Manufacture()
+    {
+        if(lastFired + FireInterval <= Time.time)
+        {
+            lastFired = Time.time;
+            GameObject spawn = Instantiate(manufacturedObject, this.transform.position, Quaternion.identity);
+            spawn.GetComponent<UnitUnpackager>().Load(this.GetComponent<Pathing>().position);
+        }
     }
     public void TakeDamage(GameObject attacker)
     {
@@ -25,6 +42,7 @@ public class Building : MonoBehaviour
         }
         else
         {
+            attacker.GetComponent<Unit>().inRange = false;
             Die();
         }
 

@@ -9,7 +9,7 @@ public class ResourceUnpacker : MonoBehaviour
     public Resource_Type Indentifier;
     public bool loadFromDatabase;
     // Start is called before the first frame update
-    public async void Load()
+    public async void Load(PlayerController player)
     {
         if (loadFromDatabase)
         {
@@ -48,6 +48,8 @@ public class ResourceUnpacker : MonoBehaviour
                     ResourceDep unit = gameObject.AddComponent<ResourceDep>();
                     unit.Amount = obj.Amount;
                     unit.MaxHealth = obj.MaxHealth;
+
+                  unit.Player1 = player;
                 }
             }
         }

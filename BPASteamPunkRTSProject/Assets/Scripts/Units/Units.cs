@@ -8,5 +8,5 @@ public enum UnitType
    Sniper,    
    Bomber,
    EnemyMedium,
-
+   Worker,
 }

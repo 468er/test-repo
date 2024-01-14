@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour
         ResourceDepsArr = GameObject.FindGameObjectsWithTag("ResourceDep");
         foreach (GameObject unit in ResourceDepsArr)
         {
-            unit.GetComponent<ResourceUnpacker>().Load();
+            unit.GetComponent<ResourceUnpacker>().Load(this);
         }
     }
    
@@ -206,7 +206,15 @@ public class PlayerController : MonoBehaviour
                             {
                                 foreach (GameObject unit in selectedUnits)
                                 {
-                                    unit.GetComponent<Unit>().UseAbility(unit2.gameObject, false);
+                                    if(unit != null)
+                                    {
+                                        unit.GetComponent<Unit>().UseAbility(unit2.gameObject, false);
+
+                                    }
+                                    else
+                                    {
+                                        selectedUnits.Remove(unit);
+                                    }
                                 }
                             }
                             else
@@ -220,7 +228,14 @@ public class PlayerController : MonoBehaviour
                             {
                                 foreach (GameObject unit in selectedUnits)
                                 {
-                                    unit.GetComponent<Unit>().UseAbility(unit3.gameObject, false);
+                                    if (unit != null)
+                                    {
+                                        unit.GetComponent<Unit>().UseAbility(unit3.gameObject, false);
+                                    }
+                                    else
+                                    {
+                                        selectedUnits.Remove(unit);
+                                    }
                                 }
                             }
                             else
@@ -232,21 +247,29 @@ public class PlayerController : MonoBehaviour
                             ResourceDep unit4 = unit1[0].transform.GetComponent<ResourceDep>();
                             foreach (GameObject unit in selectedUnits)
                             {
+                                if (unit != null)
+                                {
                                     unit.GetComponent<Unit>().UseAbility(unit4.gameObject, false);
+                                }
+                                else
+                                {
+                                    selectedUnits.Remove(unit);
+                                }
                             }
+                            break;
+                        case "Tile":
+
+                            GameObject SelectedObject = null;
+                            Vector3 destination;
+                            //takes the array value of the hex that has been selected, and converts it to it's real world position.
+                            destination = new Vector3(hits[0].transform.position.x, hits[0].transform.position.y / 0.86602540378443864676372317075294f, hits[0].transform.GetComponent<Tile>().position[2]);
+
+                            OrderUnits(destination, hitsToGOBJ, selectedUnits);
                             break;
                     }
                     
                 }
-                else
-                {
-                    GameObject SelectedObject = null;
-                    Vector3 destination;
-                    //takes the array value of the hex that has been selected, and converts it to it's real world position.
-                    destination = new Vector3(hits[0].transform.position.x, hits[0].transform.position.y / 0.86602540378443864676372317075294f, hits[0].transform.GetComponent<Tile>().position[2]);
-                    
-                    OrderUnits(destination, hitsToGOBJ, selectedUnits);
-                }
+
               
             }
         }
@@ -255,37 +278,62 @@ public class PlayerController : MonoBehaviour
             //When creating code that you want run on left click, please create an appropriately named method, that way we don't
             //have to wade through your code to find our code.
             //Make sure the method can be called in any order relative to the other methods, that way nothing glitches out that we can't figure out.
-            Select();
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                Select();
+            }
+            else
+            {
+                DeSelectAll();
+                Select();
+            }
+
         }
         MoveMap();
+    }
+    public void DeSelectAll()
+    {
+        for(int i = 0; i < selectedUnits.Count;)
+        {
+            selectedUnits[i].GetComponent<SpriteRenderer>().color = Color.yellow;
+            selectedUnits.Remove(selectedUnits[i]);
+        }
     }
     public void OrderUnits(Vector3 destination, List<GameObject> hits, List<GameObject> selectedUnits2)
     {
         foreach (GameObject unit in selectedUnits2)
         {
-            Unit Unit = unit.GetComponent<Unit>();
-            TileInMemory lastTile = null;
-            //if it's moving, it adds orders because it's a shiftclick
-            if (unit.GetComponent<Unit>().moving)
+            if(unit != null)
             {
-                if (Input.GetKey(KeyCode.LeftShift))
+                Unit Unit = unit.GetComponent<Unit>();
+                TileInMemory lastTile = null;
+                //if it's moving, it adds orders because it's a shiftclick
+                if (unit.GetComponent<Unit>().moving)
                 {
-                    List<TileInMemory> test = PrepareAddMoveOrders(destination, hits, Unit.moveTiles[Unit.moveTiles.Count - 1].locationAsArr, map[Unit.moveTiles[Unit.moveTiles.Count - 1].x, Unit.moveTiles[Unit.moveTiles.Count - 1].y, Unit.moveTiles[Unit.moveTiles.Count - 1].layer].transform.position, Unit.moveTiles[Unit.moveTiles.Count - 1].locationAsVector3, lastTile, true, unit);
-                    foreach (TileInMemory item in test)
+                    if (Input.GetKey(KeyCode.LeftShift))
                     {
-                        unit.GetComponent<Unit>().moveTiles.Add(item);
+                        List<TileInMemory> test = PrepareAddMoveOrders(destination, hits, Unit.moveTiles[Unit.moveTiles.Count - 1].locationAsArr, map[Unit.moveTiles[Unit.moveTiles.Count - 1].x, Unit.moveTiles[Unit.moveTiles.Count - 1].y, Unit.moveTiles[Unit.moveTiles.Count - 1].layer].transform.position, Unit.moveTiles[Unit.moveTiles.Count - 1].locationAsVector3, lastTile, true, unit);
+                        foreach (TileInMemory item in test)
+                        {
+                            unit.GetComponent<Unit>().moveTiles.Add(item);
+                        }
+                    }
+                    else
+                    {
+                        lastTile = unit.GetComponent<Unit>().ClearForMovement();
+                        NewMove(destination, hits, Unit, lastTile, unit);
                     }
                 }
                 else
                 {
-                    lastTile = unit.GetComponent<Unit>().ClearForMovement();
                     NewMove(destination, hits, Unit, lastTile, unit);
                 }
             }
             else
             {
-                NewMove(destination, hits, Unit, lastTile, unit);
+
             }
+           
         }
     }
     public void NewMove(Vector3 destination, List<GameObject> hits, Unit Unit, TileInMemory lastTile, GameObject unit)
@@ -941,7 +989,15 @@ public class PlayerController : MonoBehaviour
     {
         foreach(GameObject unit in selectedUnits)
         {
-            unit.GetComponent<Unit>().BecomeBuilding(BuildingPrefabs[0]);
+            if(unit != null)
+            {
+                unit.GetComponent<Unit>().BecomeBuilding(BuildingPrefabs[0], GetComponent<Inventory>());
+
+            }
+            else
+            {
+                selectedUnits.Remove(unit);
+            }
         }
     }
 }

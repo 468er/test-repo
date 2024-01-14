@@ -41,8 +41,8 @@ public class Unit : MonoBehaviour
     // Update is called once per frame
     public void Update()
     {
-        
-            if (0 < moveTiles.Count && inRange)
+          
+            if (0 < moveTiles.Count && inRange != true)
             {
 
                 int a = 0;
@@ -71,6 +71,10 @@ public class Unit : MonoBehaviour
                     }
                 }
             }
+            if(moveTiles.Count == 0)
+        {
+            moving = false;
+        }
             for (int i = 0; i < targets.Count; i++)
             {
                 if (targets[i] == null)
@@ -79,12 +83,28 @@ public class Unit : MonoBehaviour
                     i--;
                 }
             }
-            foreach (GameObject obj in targets)
+        if (targets.Count > 0)
+        {
+            if (Vector2.Distance(this.transform.position, targets[0].transform.position) >= Range)
+            {
+                inRange = true;
+            }
+            else
+            {
+                inRange = false;
+            }
+        }
+        else
+        {
+            inRange = false;
+        }
+        foreach (GameObject obj in targets)
             {
 
             UseAbility(obj, true);
             }
-        
+       
+
     }
     public void MoveOverTime(List<TileInMemory> MoveList, GameObject[,,] Map, Unit unit)
     {
@@ -137,9 +157,11 @@ public class Unit : MonoBehaviour
         moving = false;
         return LastTile;
     }
-    public void BecomeBuilding(GameObject buildingPrefab)
+    public void BecomeBuilding(GameObject buildingPrefab, Inventory playerInventory)
     {
+        playerInventory.Remove(Resource_Type.Titanium.ToString(), 0);
         GameObject building = Instantiate(buildingPrefab, this.transform.position, Quaternion.identity);
+        building.GetComponent<Pathing>().position = position;
         BuildingUnpackager building1 = building.GetComponent<BuildingUnpackager>();
         building1.Load();
         Destroy(this.gameObject);
@@ -149,13 +171,21 @@ public class Unit : MonoBehaviour
         switch (ability)
         {
             case Ability.soldier:
-                Attack(receiver, idk);
+                AttemptedMurder(receiver, idk);
                 break;
             case Ability.Worker:
                 Mine(receiver, idk);
                 break;
         }
     }
+    public void AttemptedMurder(GameObject receiver, bool idk)
+    {
+        if (receiver.CompareTag("Unit"))
+        {
+            Attack(receiver, idk);
+        }
+       
+    }     
     public void Attack(GameObject receiver, bool idk)
     {
         if (!targets.Contains(receiver))
@@ -164,13 +194,15 @@ public class Unit : MonoBehaviour
         }
         if (Vector2.Distance(this.transform.position, receiver.transform.position) <= Range)
         {
-            if(lastFired + IntervalBetweenFiring <= Time.time)
+            inRange = true;
+            if (lastFired + IntervalBetweenFiring <= Time.time)
             {
                 lastFired = Time.time;
                 switch (receiver.tag)
                 {
                     case "Unit":
                         receiver.GetComponent<Unit>().TakeDamage(this.gameObject);
+
                         break;
                     case "ResourceDep":
                         receiver.GetComponent<ResourceDep>().TakeDamage(this.gameObject);
@@ -180,7 +212,6 @@ public class Unit : MonoBehaviour
                         break;
                 }
             }
-            inRange = true;
         }
         else
         {
@@ -214,6 +245,8 @@ public class Unit : MonoBehaviour
         }
         else
         {
+            attacker.GetComponent<Unit>().inRange = false;
+
             Die();
         }
       

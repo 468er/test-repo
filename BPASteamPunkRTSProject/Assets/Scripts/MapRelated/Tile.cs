@@ -16,14 +16,34 @@ public class Tile : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Debug.Log(this.gameObject + "collided with " + collision);
-        switch(collision.transform.tag)
+        if (collision.IsTouching(GetComponent<BoxCollider2D>()))
         {
-            case "Building":
-                Moveable = false;
-                break; 
-            case "ResourceDep":
-                Moveable = false;
-                break;
+            switch (collision.transform.tag)
+            {
+                case "Building":
+                    Moveable = false;
+                    break;
+                case "ResourceDep":
+                    Moveable = false;
+                    break;
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        Debug.Log(this.gameObject + "stopped cliding with " + collision);
+        if (!collision.IsTouching(GetComponent<BoxCollider2D>()))
+        {
+            switch (collision.transform.tag)
+            {
+                case "Building":
+                    Moveable = true;
+                    break;
+                case "ResourceDep":
+                    Moveable = true;
+                    break;
+            }
         }
     }
     public void IsTunnel(int i, GameManager gameManager)

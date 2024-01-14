@@ -108,15 +108,31 @@ MonoBehaviour:
   MaxHealth: 10
   Damage: 10
   Range: 1
-  Ability: 0
+  ability: 0
   position: 000000000000000000000000
+  lastFired: 0
   positionAsVector3: {x: 0, y: 0, z: 0}
+  moveTiles: []
   moving: 0
+  lastTile:
+    f: 0
+    g: 0
+    h: 0
+    z: 0
+    fillLocation: 
+    x: 0
+    y: 0
+    layer: 0
+    locationAsArr: 
+    filllocationAsVector3: {x: 0, y: 0, z: 0}
+    locationAsVector3: {x: 0, y: 0, z: 0}
+    children: []
   transporter: {fileID: 0}
   isEnemy: 0
   user: {fileID: 0}
   targets: []
   StopAfterTargetDeaths: 0
+  inRange: 0
 --- !u!114 &3681955991543333957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,7 +159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4425ec6f6b3014a41b284ad9dd6372cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  position: 
+  position: 000000000000000000000000
 --- !u!61 &148176025462985214
 BoxCollider2D:
   m_ObjectHideFlags: 0

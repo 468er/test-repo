@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -4144661294920835945}
   - component: {fileID: -1240836491213650895}
   - component: {fileID: 7111950332270857827}
-  - component: {fileID: -7383455403211628446}
+  - component: {fileID: 1314899211623146928}
   m_Layer: 0
   m_Name: Factory
   m_TagString: Building
@@ -106,6 +106,9 @@ MonoBehaviour:
   Health: 10
   _type: 0
   isEnemy: 0
+  FireInterval: 100
+  lastFired: -1e+10
+  manufacturedObject: {fileID: 619239250298991707, guid: ecc43b0302946be419ce645ed3c69db8, type: 3}
 --- !u!114 &-4144661294920835945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,7 +122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Indentifier: 0
-  loadFromDatabase: 1
+  loadFromDatabase: 0
 --- !u!114 &-1240836491213650895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,7 +181,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!50 &-7383455403211628446
+--- !u!50 &1314899211623146928
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -187,7 +190,7 @@ Rigidbody2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2189865333342596412}
   m_BodyType: 0
-  m_Simulated: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
