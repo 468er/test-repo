@@ -7,5 +7,7 @@ public enum UnitType
    KillerAnt,
    Sniper,    
    Bomber,
+   Scout,
+   Ultralisk,
 
 }

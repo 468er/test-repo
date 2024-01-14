@@ -5,6 +5,7 @@
 [Bb]uild/
 [Ll]ibrary/
 [Ll]ocal[Cc]ache/
+[Ll]ogs/
 [Oo]bj/
 [Tt]emp/
 [Uu]nityGenerated/
@@ -47,3 +48,8 @@ BPASteamPunkRTSProject/Logs/AssetImportWorker0.log
 BPASteamPunkRTSProject/Logs/AssetImportWorker1.log
 BPASteamPunkRTSProject/Logs/shadercompiler-AssetImportWorker0.log
 BPASteamPunkRTSProject/.vs/BPASteamPunkRTSProject/FileContentIndex/09f2bd28-9d6f-45c7-9f2e-4cd877825daa.vsidx
+*.log
+BPASteamPunkRTSProject/Logs/shadercompiler-UnityShaderCompiler.exe0.log
+BPASteamPunkRTSProject/.vs/BPASteamPunkRTSProject/FileContentIndex/3f10db62-9fcd-4bff-956e-e58103608d64.vsidx
+BPASteamPunkRTSProject/.vs/BPASteamPunkRTSProject/FileContentIndex/88400e02-82cf-44c2-929b-576e2af6305c.vsidx
+BPASteamPunkRTSProject/.vs/BPASteamPunkRTSProject/FileContentIndex/f02e5aa4-53c9-4071-ad35-1145c12f2775.vsidx

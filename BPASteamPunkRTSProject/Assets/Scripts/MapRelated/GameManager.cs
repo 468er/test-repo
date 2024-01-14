@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
             {
                 for (int b = 0; b < y; b++)
                 {
-                    map[a, b, w] = allLayers[w].transform.GetChild((a * 30) + b).gameObject;
+                    map[a, b, w] = allLayers[w].transform.GetChild((a * y) + b).gameObject;
                     map[a, b, w].GetComponent<Tile>().gameManager = this;
                     map[a, b, w].GetComponent<Tile>().Initialize();
                 }
