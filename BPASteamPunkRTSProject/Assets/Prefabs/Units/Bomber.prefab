@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Indentifier: 2
-  nameAsString: KillerAnt
+  nameAsString: Bomber
   IntervalBetweenFiring: 1
   moveSpeed: 1
   Health: 10
@@ -129,7 +129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ed45fb7fd030d45819a7724bd01354, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Indentifier: 0
+  Indentifier: 2
   loadFromDatabase: 1
 --- !u!114 &2244886334141022146
 MonoBehaviour:

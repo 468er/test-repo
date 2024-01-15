@@ -7,6 +7,12 @@ public enum UnitType
    KillerAnt,
    Sniper,    
    Bomber,
+<<<<<<< HEAD
    EnemyMedium,
    Worker,
+=======
+   Scout,
+   Ultralisk,
+
+>>>>>>> CopyOfTemp3000
 }
