@@ -71,4 +71,12 @@ public class GameManager : MonoBehaviour
     {
         Debug.LogError("Test Error");
     }
+    public void ThrowWarning()
+    {
+        Debug.LogWarning("Test Error");
+    }
+    public void ThrowLogMessage()
+    {
+        Debug.Log("Test Error");
+    }
 }
