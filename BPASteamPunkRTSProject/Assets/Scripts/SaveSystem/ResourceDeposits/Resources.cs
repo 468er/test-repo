@@ -5,4 +5,7 @@ using UnityEngine;
 public enum Resource_Type
 {
     Titanium,
+    Ruby,
+    Silver,
+    Gold,
 }

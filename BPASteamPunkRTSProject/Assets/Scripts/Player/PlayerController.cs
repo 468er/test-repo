@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -24,7 +25,14 @@ public class PlayerController : MonoBehaviour
     string debugString;
     public List<GameObject> BuildingPrefabs = new List<GameObject>();
     // Start is called before the first frame update
-     public async void Load()
+    public void Awake()
+    {
+        GameObject.Find("Button (3)").GetComponent<Button>().onClick.AddListener(() =>
+        {
+            Load();
+        });
+    }
+    public async void Load()
     {
         UnitsArr = GameObject.FindGameObjectsWithTag("Unit");
         foreach(GameObject unit in UnitsArr)
@@ -906,7 +914,7 @@ public class PlayerController : MonoBehaviour
         GameObject SelectedObject = null;
         foreach (RaycastHit2D hit in hits)
         {
-            if (!selectedUnits.Contains(hit.transform.gameObject) && hit.transform.GetComponent<Unit>() != null)
+            if (!selectedUnits.Contains(hit.transform.gameObject) && hit.transform.GetComponent<Unit>() != null && hit.transform.GetComponent<Unit>().isEnemy != true)
             {
                 SelectedObject = hit.transform.gameObject;
             }

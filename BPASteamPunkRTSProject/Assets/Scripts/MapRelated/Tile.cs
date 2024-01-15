@@ -89,47 +89,60 @@ public class Tile : MonoBehaviour
 
     public void Initialize()
     {
+        SpriteRenderer SR = GetComponent<SpriteRenderer>();
         positionAsVector3 = new Vector3(position[0], position[1], position[2]);
-        switch (TypeOfTile)
+        if(SR != null)
         {
-            case TileType.wall:
-                {
-                    Moveable = false;
-                    GetComponent<SpriteRenderer>().color = new Color(0, 0, 0);
-                    break;
-                }
-            case TileType.MagmaPool:
-                {
-                    Moveable = false;
-                    GetComponent<SpriteRenderer>().color = Color.red;
-                    break;
-                }
-            case TileType.SpawnTrigger:
-                {
-                    Moveable = true;
-                    GetComponent<SpriteRenderer>().color = Color.magenta;
-                    break;
-                }
-            case TileType.Lava:
-                {
-                    Moveable = true;
-                    GetComponent<SpriteRenderer>().color = Color.yellow;
-                    break;
-                }
-            case TileType.nothing:
-                {
-                    Moveable = true;
-                    GetComponent<SpriteRenderer>().color = Color.white;
-                    break;
-                }
-            case TileType.Tunnel:
-                {
-                    Moveable = true;
-                    IsTunnel(Tunnel, gameManager);
-                    GameObject gameObject = Instantiate(gameManager.tilenNumberPrefab, gameManager.Canvas.transform);
-                    gameObject.GetComponent<UIToWorldPointUpdater>().ParentTile = this.gameObject;
-                    break;
-                }
+            SR = GetComponent<SpriteRenderer>();
+            switch (TypeOfTile)
+            {
+
+                case TileType.wall:
+                    {
+                        Moveable = false;
+                        GetComponent<SpriteRenderer>().color = new Color(0, 0, 0);
+                        break;
+                    }
+                case TileType.MagmaPool:
+                    {
+                        Moveable = false;
+                        SR.color = Color.white;
+                        SR.sprite = gameManager.SpriteIamges.Find(x => x.Key == TypeOfTile).Sprite;
+                        break;
+                    }
+                case TileType.SpawnTrigger:
+                    {
+                        Moveable = true;
+                        GetComponent<SpriteRenderer>().color = Color.magenta;
+                        break;
+                    }
+                case TileType.Lava:
+                    {
+                        Moveable = true;
+                        SR.color = Color.white;
+                        SR.sprite = gameManager.SpriteIamges.Find(x => x.Key == TypeOfTile).Sprite;
+                        break;
+                    }
+                case TileType.nothing:
+                    {
+                        Moveable = true;
+                        GetComponent<SpriteRenderer>().color = new Color(0.4811321f, 0.3377002f, 0.3377002f);
+                        break;
+                    }
+                case TileType.Tunnel:
+                    {
+                        Moveable = true;
+                        IsTunnel(Tunnel, gameManager);
+                        GameObject gameObject = Instantiate(gameManager.tilenNumberPrefab, gameManager.Canvas.transform);
+                        gameObject.GetComponent<UIToWorldPointUpdater>().ParentTile = this.gameObject;
+                        break;
+                    }
+            }
+
+        }
+        else
+        {
+            Debug.LogWarning(this + "Had no sprite renderer!");
         }
     }
 

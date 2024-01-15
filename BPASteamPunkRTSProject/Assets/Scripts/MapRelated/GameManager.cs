@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public int x;
@@ -22,7 +22,35 @@ public class GameManager : MonoBehaviour
     public GameObject Canvas;
     public List<GameObject> SpawnPool = new List<GameObject>();
     public GameObject tilenNumberPrefab;
+    public List<ClassWithKeyAndImage> SpriteIamges = new List<ClassWithKeyAndImage>();
     // Start is called before the first frame update
+    private void Awake()
+    {
+        try
+        {
+            GameObject.Find("Throw Error").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                ThrowError();
+            });
+            GameObject.Find("Throw Exception").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                ThrowException();
+            });
+            GameObject.Find("Throw Warning").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                ThrowWarning();
+            });
+            GameObject.Find("Throw Log").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                ThrowLogMessage();
+            });
+        }
+       
+          catch (System.Exception test)
+        {
+            Debug.LogError("Error assigning Throw test Listeners + " + test);
+        }
+    }
     void Start()
     {
         Canvas.SetActive(true);

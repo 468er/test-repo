@@ -31,12 +31,34 @@ public class Unit : MonoBehaviour
     public bool StopAfterTargetDeaths;
     public GameObject[,,] map;
     public bool inRange = false;
+    Rigidbody2D rigidbody2D;
     // Start is called before the first frame update
+    private void Awake()
+    {
+        //if (GetComponent<Rigidbody2D>() != null)
+        //{
+        //    rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+
+        //    rigidbody2D.gravityScale = 0;
+        //    rigidbody2D.constraints = RigidbodyConstraints2D.FreezePositionY;
+        //    rigidbody2D.constraints = RigidbodyConstraints2D.FreezePositionX;
+        //}
+        //else
+        //{
+        //    rigidbody2D = gameObject.AddComponent<Rigidbody2D>();
+
+        //    rigidbody2D.gravityScale = 0;
+        //    rigidbody2D.constraints = RigidbodyConstraints2D.FreezePositionY;
+        //    rigidbody2D.constraints = RigidbodyConstraints2D.FreezePositionX;
+        //}
+    }
     public void Start()
     {
         positionAsVector3 = new Vector3(position[0], position[1], position[2]);
         user = GameObject.Find("Player1").GetComponent<PlayerController>();
         lastFired = Time.time;
+       
+       
     }
     // Update is called once per frame
     public void Update()
@@ -56,7 +78,18 @@ public class Unit : MonoBehaviour
                     if (transform.position != map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position)
                     {
                         transform.position = Vector3.MoveTowards(transform.position, map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position, moveSpeed * Time.deltaTime);
-                    }
+                        
+                    //cound't figure out how to get rotation to work so I gave up.
+                    //if(transform.rotation.eulerAngles.z != AngleBetween + 90)
+                    //{
+
+                    //}
+                    //transform.LookAt(CurrentTile.transform.position);
+                    //Vector3 vectorToTarget = CurrentTile.transform.position - transform.position;
+                    //float angle = Mathf.Atan2(vectorToTarget.y, vectorToTarget.x) * Mathf.Rad2Deg;
+                    //Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
+                    //transform.rotation = Quaternion.Slerp(transform.rotation, q, Time.deltaTime * 5f);
+                }
                     else
                     {
                         CurrentTile.Ability(this);

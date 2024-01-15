@@ -40,6 +40,28 @@ public class SaveLoadManager : MonoBehaviour
     //    UnitSaveObject Attempt = JsonUtility.FromJson<UnitSaveObject>(test) ;
     //    print(test);
     //}    
+    private void Awake()
+    {
+        try
+        {
+            GameObject.Find("Button").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                SaveUnitTypes();
+            });
+            GameObject.Find("Button (1)").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                SaveBuildingTypes();
+            });
+            GameObject.Find("Button (2)").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                SaveResourceTypes();
+            });
+        }
+        catch (System.Exception test)
+        {
+            Debug.LogError("Error assigning Save Button Listeners + " + test);
+        }
+    }
     public void SaveUnitTypes()
     {
         foreach(Unit unit in Units)

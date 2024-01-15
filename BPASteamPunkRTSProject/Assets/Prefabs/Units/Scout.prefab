@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.49, y: 4.23, z: 0}
-  m_LocalScale: {x: 0.55, y: 0.55, z: 0.55}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -77,8 +77,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 0.7995101, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 090445ec39945b447a3fddbfe2bdb42f, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a27497ba9fbbf4e43ad902950730abda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Indentifier: 0
+  Indentifier: 5
   nameAsString: Scout
   IntervalBetweenFiring: 1
   moveSpeed: 10
@@ -108,15 +108,31 @@ MonoBehaviour:
   MaxHealth: 15
   Damage: 10
   Range: 1
-  Ability: 0
+  ability: 0
   position: 000000000000000000000000
+  lastFired: 0
   positionAsVector3: {x: 0, y: 0, z: 0}
+  moveTiles: []
   moving: 0
+  lastTile:
+    f: 0
+    g: 0
+    h: 0
+    z: 0
+    fillLocation: 
+    x: 0
+    y: 0
+    layer: 0
+    locationAsArr: 
+    filllocationAsVector3: {x: 0, y: 0, z: 0}
+    locationAsVector3: {x: 0, y: 0, z: 0}
+    children: []
   transporter: {fileID: 0}
   isEnemy: 0
   user: {fileID: 0}
   targets: []
   StopAfterTargetDeaths: 0
+  inRange: 0
 --- !u!114 &2117485010215637776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,12 +196,12 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 3.28, y: 3.2}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 3.28, y: 3.2}
   m_EdgeRadius: 0
