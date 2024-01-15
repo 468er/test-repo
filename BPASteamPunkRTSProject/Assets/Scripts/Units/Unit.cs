@@ -54,6 +54,10 @@ public class Unit : MonoBehaviour
     }
     public void Start()
     {
+        if(position == null)
+        {
+            position = MappingTools.WorldPositionToPositionArray(transform.position);
+        }
         positionAsVector3 = new Vector3(position[0], position[1], position[2]);
         user = GameObject.Find("Player1").GetComponent<PlayerController>();
         lastFired = Time.time;

@@ -539,6 +539,112 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &390781369
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 390781371}
+  - component: {fileID: 390781370}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &390781370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 390781369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4afc1ca4ca88554c89b245cc733ae21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Sounds:
+  - name: GameTheme
+    Clip: {fileID: 8300000, guid: 28765dc4a52a35140999e1bdb1d0b971, type: 3}
+    clip_length: 0
+    volume: 0.09
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+    IFSFXis1_2ifOOGA: 0
+    position: 0
+  - name: MenuTheme
+    Clip: {fileID: 8300000, guid: d9ac19a78744b0347b1b4f7e7c1c9a69, type: 3}
+    clip_length: 0
+    volume: 0.12
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+    IFSFXis1_2ifOOGA: 0
+    position: 0
+  - name: Click
+    Clip: {fileID: 8300000, guid: 67a5945fbaf9e91409409a46398d7444, type: 3}
+    clip_length: 0
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+    IFSFXis1_2ifOOGA: 0
+    position: 0
+  - name: Hit
+    Clip: {fileID: 8300000, guid: 2241c3bc659778b48887ec9e6a7b798e, type: 3}
+    clip_length: 0
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+    IFSFXis1_2ifOOGA: 0
+    position: 0
+  - name: Analog
+    Clip: {fileID: 8300000, guid: 79b526976f8f17243bc26106650f06f1, type: 3}
+    clip_length: 0
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+    IFSFXis1_2ifOOGA: 0
+    position: 0
+  ooga_sources: []
+  all_audio_srcs: []
+  amountofsounds: 0
+  a:
+    name: 
+    Clip: {fileID: 0}
+    clip_length: 0
+    volume: 0
+    pitch: 0
+    loop: 0
+    source: {fileID: 0}
+    IFSFXis1_2ifOOGA: 0
+    position: 0
+  all_button_toggle_sliders: []
+  ActualPath: 0
+  game_manager: {fileID: 0}
+--- !u!4 &390781371
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 390781369}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.572249, y: -0.18699229, z: -0.006218157}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &418263653
 GameObject:
   m_ObjectHideFlags: 0
@@ -1770,3 +1876,4 @@ SceneRoots:
   - {fileID: 212230322}
   - {fileID: 1653202499}
   - {fileID: 50670585}
+  - {fileID: 390781371}

@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour
     public GameObject[] ResourceDepsArr;
     string debugString;
     public List<GameObject> BuildingPrefabs = new List<GameObject>();
+    [SerializeField] GameObject FactoryUI;
+    public audio_manager AudioManager;
     // Start is called before the first frame update
     public void Awake()
     {
@@ -31,9 +33,12 @@ public class PlayerController : MonoBehaviour
         {
             Load();
         });
+        AudioManager = GameObject.Find("AudioManager").GetComponent<audio_manager>();
     }
     public async void Load()
     {
+        AudioManager.Play("GameTheme");
+        AudioManager.Stop("MenuTheme");
         UnitsArr = GameObject.FindGameObjectsWithTag("Unit");
         foreach(GameObject unit in UnitsArr)
         {
@@ -283,6 +288,7 @@ public class PlayerController : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(0))
         {
+            AudioManager.Play("Click");
             //When creating code that you want run on left click, please create an appropriately named method, that way we don't
             //have to wade through your code to find our code.
             //Make sure the method can be called in any order relative to the other methods, that way nothing glitches out that we can't figure out.
@@ -292,7 +298,10 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                DeSelectAll();
+                if (Input.GetKey(KeyCode.LeftAlt))
+                {
+                    DeSelectAll();
+                }
                 Select();
             }
 
@@ -918,11 +927,25 @@ public class PlayerController : MonoBehaviour
             {
                 SelectedObject = hit.transform.gameObject;
             }
+            else if(hit.transform.GetComponent<Building>() != null)
+            {
+                if(hit.transform.GetComponent<Building>().DD== null)
+                {
+                    GameObject gameObject = Instantiate(FactoryUI, gameManager.Canvas.transform);
+                    gameObject.GetComponent<UIToWorldPointUpdater>().ParentTile = hit.transform.gameObject;
+                    gameObject.GetComponent<FactoryDropDown>().Initialize(gameObject);
+                }
+
+            }
         }
         if (SelectedObject != null)
         {
             TrySelect(SelectedObject);
         }
+    }
+    void CreateBuildingUI()
+    {
+
     }
     void TrySelect(GameObject hit)
     {

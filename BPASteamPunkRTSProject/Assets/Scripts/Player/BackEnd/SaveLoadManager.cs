@@ -16,30 +16,101 @@ public class SaveLoadManager : MonoBehaviour
     public string output;
     public List<ResourceDep> Resources = new List<ResourceDep>();
     public List<ResourceSaveOJB> ResourcesAFter = new List<ResourceSaveOJB>();
-    //public  async void Save()
-    //{
-    //    foreach(Unit unit in Units)
-    //    {
-    //        UnitSavOBJ obj = new UnitSavOBJ();
-    //        obj.name = unit.name;
-    //        obj.MaxHealth = unit.MaxHealth;
-    //        obj.moveSpeed = unit.moveSpeed;
-    //        obj.Damage = unit.Damage;
-    //        obj.Range = unit.Range;
-    //        obj.Health = unit.Health;
-    //        obj.Ability = unit.Ability;
-    //        UnitsAfter.Add(obj);
-    //    }
-    //    //UnitSaveObject a = new UnitSaveObject(player.GetComponent<SpriteRenderer>().color, player.transform.position);
-    //    //a.color = new Color(1, 1, 1);
-    //    string json = JsonUtility.ToJson(UnitsAfter);
-    //    print(json);
-    //    var data = new Dictionary<string, object> { { "Units", json } };
-    //    await CloudSaveService.Instance.Data.Player.SaveAsync(data);
-    //    var test = await CloudCodeService.Instance.CallEndpointAsync("Test");
-    //    UnitSaveObject Attempt = JsonUtility.FromJson<UnitSaveObject>(test) ;
-    //    print(test);
-    //}    
+
+    public List<GameObject> UnitPrefabs = new List<GameObject>();
+    public List<GameObject> BuildingPrefabs = new List<GameObject>();
+    public List<GameObject> ResourcePRefabs = new List<GameObject>();
+    public async void Save()
+    {
+
+        GameObject[] GameUnits;
+        GameUnits = GameObject.FindGameObjectsWithTag("Unit");
+        List<Building> Buildings = new List<Building>();
+        List<ResourceDep> ResourceDeps = new List<ResourceDep>();
+        List<UnitSaveFileOBJ> SaveUnits = new List<UnitSaveFileOBJ>();
+        List<BuildingSaveFileOBJ> SaveBuildings = new List<BuildingSaveFileOBJ>();
+        List<ResourceDep> SaveResourceDeps = new List<ResourceDep>();
+        foreach (GameObject Obj in GameUnits)
+        {
+            Unit unit = Obj.GetComponent<Unit>();
+            UnitSaveFileOBJ obj = new UnitSaveFileOBJ(unit.position, unit.Health, unit.GetComponent<Unit>().Indentifier, unit.transform.position);
+            SaveUnits.Add(obj);
+        } 
+        //foreach (Building unit in Buildings)
+        //{
+        //    UnitSaveFileOBJ obj = new UnitSaveFileOBJ(unit.GetComponent<Pathing>().position, unit.Health);
+ 
+        //} 
+        //foreach (ResourceDep unit in ResourceDeps)
+        //{
+        //    UnitSaveFileOBJ obj = new UnitSaveFileOBJ(unit.GetComponent<Pathing>().position, unit.Health);
+ 
+        //}
+        SaveFileOBJ baseSaveFile = new SaveFileOBJ(SaveUnits, SaveBuildings, SaveResourceDeps);
+        //UnitSaveObject a = new UnitSaveObject(player.GetComponent<SpriteRenderer>().color, player.transform.position);
+        //a.color = new Color(1, 1, 1);
+        var json = JsonConvert.SerializeObject(baseSaveFile);
+       
+        
+        char[] characters = json.ToCharArray();
+        List<char> list = new List<char>();
+        foreach (char item in characters)
+        {
+            if (item == '"')
+            {
+                list.Add('\\');
+                list.Add(item);
+            }
+            else
+            {
+                list.Add(item);
+            }
+        }
+        char[] listAsArr = list.ToArray();
+        string pureJson = new string(listAsArr);
+        print(pureJson);
+       
+        print(json);
+        var data = new Dictionary<string, object> { { "FileJson", pureJson } };
+        await CloudSaveService.Instance.Data.Player.SaveAsync(data);
+        //var test = await CloudCodeService.Instance.CallEndpointAsync("Test");
+        //    UnitSaveObject Attempt = JsonUtility.FromJson<UnitSaveObject>(test) ;
+        //    print(test);
+    }  
+    public async void Load()
+    {
+
+        var test = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { "FileJson" });
+        string stringData = test["FileJson"].Value.GetAsString();
+
+        int endIndex = stringData.Length - (4 + 0);
+        string data = stringData;
+        char[] characters = data.ToCharArray();
+        List<char> list = new List<char>();
+        foreach (char item in characters)
+        {
+            if (item == '\\')
+            {
+
+            }
+            else
+            {
+                list.Add(item);
+
+            }
+        }
+        char[] listAsArr = list.ToArray();
+        string pureJson = new string(listAsArr);
+        print("List:" + pureJson);
+        var Attempt = JsonConvert.DeserializeObject<SaveFileOBJ>(pureJson);
+        foreach(var unit in Attempt.SaveUnits)
+        {
+          GameObject create = Instantiate(UnitPrefabs.Find(x => x.GetComponent<UnitUnpackager>().Indentifier == unit.unitType), unit.realPosition, Quaternion.identity);
+            create.GetComponent<UnitUnpackager>().Load(unit.GetPos());
+            create.GetComponent<Unit>().Health = unit.getHealth();
+        }
+        print(test);
+    }
     private void Awake()
     {
         try

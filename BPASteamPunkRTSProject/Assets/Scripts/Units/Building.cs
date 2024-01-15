@@ -14,6 +14,8 @@ public class Building : MonoBehaviour
     public List<GameObject> manufacturedObjects;
     public UnitType Manufacturing;
     PlayerController player;
+    public int DDValue;
+    public GameObject DD;
     //will block of squares by using the collider2dtrigger method. Without having to do any checking, it will automatically hit every square where it is blocking the majority of the square and 
     //turn off moving in that square.
     private void Start()

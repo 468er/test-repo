@@ -106,9 +106,17 @@ MonoBehaviour:
   Health: 10
   _type: 0
   isEnemy: 0
-  FireInterval: 100
+  FireInterval: 10
   lastFired: -1e+10
-  manufacturedObject: {fileID: 619239250298991707, guid: ecc43b0302946be419ce645ed3c69db8, type: 3}
+  manufacturedObjects:
+  - {fileID: 1127023166282767275, guid: 0df3853a636ba0842af4481b352179e2, type: 3}
+  - {fileID: 619239250298991707, guid: ecc43b0302946be419ce645ed3c69db8, type: 3}
+  - {fileID: 3791113963438401632, guid: a52e06dcebe689a4bb6606fcb82e9f39, type: 3}
+  - {fileID: 8650627444994652063, guid: 983ae4ad30778634db6cdc10de55d6ba, type: 3}
+  - {fileID: 3722964235189269196, guid: 9d428376810b6f744a6595def74c9196, type: 3}
+  - {fileID: 619239250298991707, guid: d67e6ebda153a1e43a80d58ea8326379, type: 3}
+  Manufacturing: 4
+  DDValue: 0
 --- !u!114 &-4144661294920835945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,7 +173,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -179,7 +187,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 4.8, y: 4.8}
   m_EdgeRadius: 0
 --- !u!50 &1314899211623146928
 Rigidbody2D:
@@ -189,8 +197,8 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2189865333342596412}
-  m_BodyType: 0
-  m_Simulated: 0
+  m_BodyType: 2
+  m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
