@@ -47,19 +47,20 @@ public class Building : MonoBehaviour
             switch (Manufacturing)
             {
                 case UnitType.KillerAnt:
-                    playerinventory.Remove(Resource_Type.Titanium.ToString(), 0);
+                    playerinventory.Remove(Resource_Type.Titanium.ToString(), 150);
                     break;
                 case UnitType.Bomber:
-                    playerinventory.Remove(Resource_Type.Titanium.ToString(), 0);
+                    playerinventory.Remove(Resource_Type.Titanium.ToString(), 100);
+                    playerinventory.Remove(Resource_Type.Silver.ToString(), 20);
                     break;
                 case UnitType.Ultralisk:
-                    playerinventory.Remove(Resource_Type.Titanium.ToString(), 0);
+                    playerinventory.Remove(Resource_Type.Ruby.ToString(), 20);
                     break;
                 case UnitType.Scout:
-                    playerinventory.Remove(Resource_Type.Titanium.ToString(), 0);
+                    playerinventory.Remove(Resource_Type.Gold.ToString(), 100);
                     break;
                 case UnitType.Sniper:
-                    playerinventory.Remove(Resource_Type.Titanium.ToString(), 0);
+                    playerinventory.Remove(Resource_Type.Silver.ToString(), 60);
                     break;
             }
             GameObject spawn = Instantiate(manufacturedObject, this.transform.position, Quaternion.identity);

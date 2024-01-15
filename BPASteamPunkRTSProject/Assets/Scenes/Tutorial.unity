@@ -257,18 +257,34 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'CONTROLS
+  m_text: 'OVERVIEW
 
-    Move around the camera with WASD. Zoom out or in with scroll.
+    As a race of steam powered ant robots, the Hive Mind has
+    instructed you to command a mining operation in this planet''s depths. Explore
+    the layers of this world, mine precious minerals, and fight fearsome enemies.
+    Can you conquer these caves?
 
-    Select
-    a unit by clicking on it. Right click a tile to command it to move there.
+    CONTROLS
 
-    Click
-    on buildings to interact with them.
+    Move around the camera with WASD.
+    Zoom out or in with scroll.
 
+    Select a unit by clicking on it. Right click
+    a tile to command it to move there.
 
-'
+    Left click on buildings to interact
+    with them.
+
+    MECHANICS
+
+    The world is divided into layers. Each layer is
+    linked by a tunnel.
+
+    Use worker ants to gather resources from resource nodes.
+    As you go deeper, you''ll find new kinds of resources.
+
+    Units are produced
+    from factories. Different units require different kinds of resources.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -295,8 +311,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40
-  m_fontSizeBase: 40
+  m_fontSize: 37.5
+  m_fontSizeBase: 37.5
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -331,7 +347,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 117.89667, z: 0, w: 0}
+  m_margin: {x: 54.354004, y: 65.716736, z: 434.8324, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
