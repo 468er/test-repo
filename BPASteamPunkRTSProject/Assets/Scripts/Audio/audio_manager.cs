@@ -63,7 +63,7 @@ public class audio_manager : MonoBehaviour
     }
     private void Start()
     {
-        Play("");
+        Play("MenuTheme");
         //AudioListener.volume = PlayerPrefs.GetFloat("final_audio_val", 1f);
         //int i = 0;
         //foreach (Sound s in Sounds)
