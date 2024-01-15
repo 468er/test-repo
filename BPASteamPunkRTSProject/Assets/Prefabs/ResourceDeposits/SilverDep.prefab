@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 9126204527513524031}
   - component: {fileID: 8812625222266839233}
   m_Layer: 0
-  m_Name: ResourceDep 2
+  m_Name: SilverDep
   m_TagString: ResourceDep
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 57e1a1e3522b02b4585321896f55ad38, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 031bc6af441b8eb4383834edab6d18f7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -102,7 +102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Amount: 5
   MaxHealth: 5
-  _Type: 0
+  _Type: 2
   Health: 5
   Player1: {fileID: 0}
 --- !u!114 &-4335282875572849711
@@ -117,7 +117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c909a214914214c4bbab27026e89cc26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Indentifier: 0
+  Indentifier: 2
   loadFromDatabase: 1
 --- !u!61 &9126204527513524031
 BoxCollider2D:
