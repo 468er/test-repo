@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a27497ba9fbbf4e43ad902950730abda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Indentifier: 4
+  Indentifier: 6
   nameAsString: Ultralisk
   IntervalBetweenFiring: 1
   moveSpeed: 1
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ed45fb7fd030d45819a7724bd01354, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Indentifier: 4
+  Indentifier: 6
   loadFromDatabase: 1
 --- !u!114 &7071457846911141578
 MonoBehaviour:

@@ -40,21 +40,21 @@ public class audio_manager : MonoBehaviour
         all_audio_srcs = new AudioSource[amountofsounds];
         int i = 0;
         DontDestroyOnLoad(gameObject);
-        DontDestroyOnLoad(GameObject.Find("pause_manager_menu2"));
         foreach (Sound s in Sounds)
         {
             s.source = gameObject.AddComponent<AudioSource>();
-            if (s.IFSFXis1_2ifOOGA == 1)
-            {
-                s.volume = PlayerPrefs.GetFloat("o_o_g_a_audio_val", 1f);
-                ooga_sources[i] = s.source;
-            }
+            //if (s.IFSFXis1_2ifOOGA == 1)
+            //{
+            //    s.volume = PlayerPrefs.GetFloat("o_o_g_a_audio_val", 1f);
+            //    ooga_sources[i] = s.source;
+            //}
             s.source.clip = s.Clip;
 
             s.source.volume = s.volume;
             s.source.pitch = s.pitch;
             s.source.loop = s.loop;
             s.clip_length = s.Clip.length;
+            //s.source.outputAudioMixerGroup = s.test;
 
             all_audio_srcs[i] = s.source;
             i++;
@@ -63,51 +63,52 @@ public class audio_manager : MonoBehaviour
     }
     private void Start()
     {
-        AudioListener.volume = PlayerPrefs.GetFloat("final_audio_val", 1f);
-        int i = 0;
-        foreach (Sound s in Sounds)
-        {
-            if (i < 2)
-            {
-                i++;
-            }
-            else
-            {
-                string sound_name = Sounds[i].name;
+        Play("");
+        //AudioListener.volume = PlayerPrefs.GetFloat("final_audio_val", 1f);
+        //int i = 0;
+        //foreach (Sound s in Sounds)
+        //{
+        //    if (i < 2)
+        //    {
+        //        i++;
+        //    }
+        //    else
+        //    {
+        //        string sound_name = Sounds[i].name;
 
-            }
-        }
-        if (SceneManager.GetActiveScene().name == "OpeningMenu")
-        {
-            Play("MainMenu");
-        }
-        final_audio_script = GameObject.Find("Slider").GetComponent<pause_behaivor>();
-        ooga_audio_script = GameObject.Find("Slider (1)").GetComponent<pause_behaivor>();
-        inga_audioscript = GameObject.Find("Slider (2)").GetComponent<pause_behaivor>();
-        final_audio_script.on_value_changed_is_true = false;
-        ooga_audio_script.on_value_changed_is_true = false;
-        inga_audioscript.on_value_changed_is_true = false;
-        Stop("choosing_cow_theme");
-        final_audio_slider = GameObject.Find("Slider").GetComponent<Slider>();
-        int Final_volume;
-        Final_volume = (int)(AudioListener.volume * 100f);
-        final_audio_txt = GameObject.Find("Final Audio 2").GetComponent<TextMeshProUGUI>();
-        final_audio_txt.text = (AudioListener.volume * 100f) + "";
-        final_audio_slider.value = Final_volume;
-        ooga_audio_slider = GameObject.Find("Slider (1)").GetComponent<Slider>();
-        ooga_audio_txt = GameObject.Find("oogatext").GetComponent<TextMeshProUGUI>();
-        Final_volume = (int)(Sounds[1].source.volume * 100);
-        ooga_audio_txt.text = "" + Final_volume;
-        ooga_audio_slider.value = Final_volume;
-        inga_audio_slider = GameObject.Find("Slider (2)").GetComponent<Slider>();
-        inga_audio_txt = GameObject.Find("ingatext").GetComponent<TextMeshProUGUI>();
-        Final_volume = (int)(PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name, 1f) * 100);
-        inga_audio_slider.value = Final_volume;
-        inga_audio_txt.text = Final_volume.ToString();
+        //    }
+        //}
+        //if (SceneManager.GetActiveScene().name == "OpeningMenu")
+        //{
+        //    Play("MainMenu");
+        //}
+        //final_audio_script = GameObject.Find("Slider").GetComponent<pause_behaivor>();
+        //ooga_audio_script = GameObject.Find("Slider (1)").GetComponent<pause_behaivor>();
+        //inga_audioscript = GameObject.Find("Slider (2)").GetComponent<pause_behaivor>();
+        //final_audio_script.on_value_changed_is_true = false;
+        //ooga_audio_script.on_value_changed_is_true = false;
+        //inga_audioscript.on_value_changed_is_true = false;
+        //Stop("choosing_cow_theme");
+        //final_audio_slider = GameObject.Find("Slider").GetComponent<Slider>();
+        //int Final_volume;
+        //Final_volume = (int)(AudioListener.volume * 100f);
+        //final_audio_txt = GameObject.Find("Final Audio 2").GetComponent<TextMeshProUGUI>();
+        //final_audio_txt.text = (AudioListener.volume * 100f) + "";
+        //final_audio_slider.value = Final_volume;
+        //ooga_audio_slider = GameObject.Find("Slider (1)").GetComponent<Slider>();
+        //ooga_audio_txt = GameObject.Find("oogatext").GetComponent<TextMeshProUGUI>();
+        //Final_volume = (int)(Sounds[1].source.volume * 100);
+        //ooga_audio_txt.text = "" + Final_volume;
+        //ooga_audio_slider.value = Final_volume;
+        //inga_audio_slider = GameObject.Find("Slider (2)").GetComponent<Slider>();
+        //inga_audio_txt = GameObject.Find("ingatext").GetComponent<TextMeshProUGUI>();
+        //Final_volume = (int)(PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name, 1f) * 100);
+        //inga_audio_slider.value = Final_volume;
+        //inga_audio_txt.text = Final_volume.ToString();
 
-        inga_audioscript.on_value_changed_is_true = true;
-        final_audio_script.on_value_changed_is_true = true;
-        ooga_audio_script.on_value_changed_is_true = true;
+        //inga_audioscript.on_value_changed_is_true = true;
+        //final_audio_script.on_value_changed_is_true = true;
+        //ooga_audio_script.on_value_changed_is_true = true;
 
     }
 
