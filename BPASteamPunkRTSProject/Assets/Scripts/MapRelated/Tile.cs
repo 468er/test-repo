@@ -126,7 +126,7 @@ public class Tile : MonoBehaviour
                 {
                     Moveable = true;
                     IsTunnel(Tunnel, gameManager);
-                    GameObject gameObject = Instantiate(gameManager.tilenNumberPrefab);
+                    GameObject gameObject = Instantiate(gameManager.tilenNumberPrefab, gameManager.Canvas.transform);
                     gameObject.GetComponent<UIToWorldPointUpdater>().ParentTile = this.gameObject;
                     break;
                 }
