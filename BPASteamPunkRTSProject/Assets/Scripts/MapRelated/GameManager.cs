@@ -63,10 +63,12 @@ public class GameManager : MonoBehaviour
         //map[4, 4, 2].GetComponent<Tile>().IsTunnel(2, this);
         Player1.map = map;
     }
-
-    // Update is called once per frame
-    void Update()
+    public void ThrowException()
     {
-
+        throw new System.Exception();
+    }
+    public void ThrowError()
+    {
+        Debug.LogError("Test Error");
     }
 }
