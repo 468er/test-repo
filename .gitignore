@@ -6,7 +6,7 @@
 [Bb]PASteamPunkRTSProject/UserSettings/Layouts
 [Ll]ibrary/
 [Ll]ocal[Cc]ache/
-[Ll]ogs/
+[Bb]PASteamPunkRTSProject/Logs/
 [Oo]bj/
 [Tt]emp/
 [Uu]nityGenerated/
@@ -51,3 +51,4 @@ BPASteamPunkRTSProject/Logs/shadercompiler-AssetImportWorker0.log
 BPASteamPunkRTSProject/.vs/BPASteamPunkRTSProject/FileContentIndex/09f2bd28-9d6f-45c7-9f2e-4cd877825daa.vsidx
 *.log
 BPASteamPunkRTSProject/Logs/shadercompiler-UnityShaderCompiler.exe0.log
+*.log
