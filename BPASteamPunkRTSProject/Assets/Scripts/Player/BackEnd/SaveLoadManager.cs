@@ -106,6 +106,7 @@ public class SaveLoadManager : MonoBehaviour
         foreach(var unit in Attempt.SaveUnits)
         {
           GameObject create = Instantiate(UnitPrefabs.Find(x => x.GetComponent<UnitUnpackager>().Indentifier == unit.unitType), unit.realPosition, Quaternion.identity);
+            create.transform.position = unit.realPosition;
             create.GetComponent<UnitUnpackager>().Load(unit.GetPos());
             create.GetComponent<Unit>().Health = unit.getHealth();
         }

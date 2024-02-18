@@ -203,85 +203,90 @@ public class PlayerController : MonoBehaviour
             {
                 var hits = Physics2D.RaycastAll(new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y), new Vector2(0, 0));
                 List<GameObject> hitsToGOBJ = new List<GameObject>();
-                for(int i = 0; i < hits.Length; i++)
+                for (int i = 0; i < hits.Length; i++)
                 {
                     hitsToGOBJ.Add( hits[i].transform.gameObject);
                 }
-                RaycastHit2D[] unit1 = Array.FindAll(hits, x => x.transform.GetComponent<Pathing>());
-                //if clicking on unit 
-                if (unit1.Length > 0)
+                //for(int i = 0; i < hits.Length; i++)
+                //{
+                //    hitsToGOBJ.Add( hits[i].transform.gameObject);
+                //}
+                foreach(GameObject unit1 in hitsToGOBJ)
                 {
-                    switch (unit1[0].transform.tag)
-                    {
-                        case "Unit":
-                            Unit unit2 = unit1[0].transform.GetComponent<Unit>();
-                            if (unit2.isEnemy)
-                            {
-                                foreach (GameObject unit in selectedUnits)
+                        switch (unit1.transform.tag)
+                        {
+                            case "Unit":
+                                Unit unit2 = unit1.transform.GetComponent<Unit>();
+                                if (unit2.isEnemy)
                                 {
-                                    if(unit != null)
+                                    foreach (GameObject unit in selectedUnits)
                                     {
-                                        unit.GetComponent<Unit>().UseAbility(unit2.gameObject, false);
+                                        if (unit != null)
+                                        {
+                                            unit.GetComponent<Unit>().UseAbility(unit2.gameObject, false);
 
-                                    }
-                                    else
-                                    {
-                                        selectedUnits.Remove(unit);
+                                        }
+                                        else
+                                        {
+                                            selectedUnits.Remove(unit);
+                                        }
                                     }
                                 }
-                            }
-                            else
-                            {
+                                else
+                                {
 
-                            }
-                            break;
-                        case "Building":
-                            Building unit3 = unit1[0].transform.GetComponent<Building>();
-                            if (unit3.isEnemy)
-                            {
+                                }
+                                break;
+                            case "Building":
+                                Building unit3 = unit1.transform.GetComponent<Building>();
+                                if (unit3.isEnemy)
+                                {
+                                    foreach (GameObject unit in selectedUnits)
+                                    {
+                                        if (unit != null)
+                                        {
+                                            unit.GetComponent<Unit>().UseAbility(unit3.gameObject, false);
+                                        }
+                                        else
+                                        {
+                                            selectedUnits.Remove(unit);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+
+                                }
+                                break;
+                            case "ResourceDep":
+                                ResourceDep unit4 = unit1.transform.GetComponent<ResourceDep>();
                                 foreach (GameObject unit in selectedUnits)
                                 {
                                     if (unit != null)
                                     {
-                                        unit.GetComponent<Unit>().UseAbility(unit3.gameObject, false);
+                                        unit.GetComponent<Unit>().UseAbility(unit4.gameObject, false);
                                     }
                                     else
                                     {
                                         selectedUnits.Remove(unit);
                                     }
                                 }
-                            }
-                            else
-                            {
+                                break;
+                            case "Tile":
 
-                            }
-                            break;
-                        case "ResourceDep":
-                            ResourceDep unit4 = unit1[0].transform.GetComponent<ResourceDep>();
-                            foreach (GameObject unit in selectedUnits)
-                            {
-                                if (unit != null)
-                                {
-                                    unit.GetComponent<Unit>().UseAbility(unit4.gameObject, false);
-                                }
-                                else
-                                {
-                                    selectedUnits.Remove(unit);
-                                }
-                            }
-                            break;
-                        case "Tile":
+                                GameObject SelectedObject = null;
+                                Vector3 destination;
+                                //takes the array value of the hex that has been selected, and converts it to it's real world position.
+                                destination = new Vector3(unit1.transform.position.x, unit1.transform.position.y / 0.86602540378443864676372317075294f, unit1.transform.GetComponent<Tile>().position[2]);
 
-                            GameObject SelectedObject = null;
-                            Vector3 destination;
-                            //takes the array value of the hex that has been selected, and converts it to it's real world position.
-                            destination = new Vector3(hits[0].transform.position.x, hits[0].transform.position.y / 0.86602540378443864676372317075294f, hits[0].transform.GetComponent<Tile>().position[2]);
+                                OrderUnits(destination, hitsToGOBJ, selectedUnits);
+                                break;
+                        }
 
-                            OrderUnits(destination, hitsToGOBJ, selectedUnits);
-                            break;
-                    }
                     
+
                 }
+                //if clicking on unit 
 
               
             }
@@ -559,7 +564,7 @@ public class PlayerController : MonoBehaviour
                     
                 }
                 Tile TileOnRightNow = map[position[0], position[1], position[2]].GetComponent<Tile>();
-                if(TileOnRightNow.Tunnel != 0)
+                if(TileOnRightNow.TypeOfTile == TileType.Tunnel)
                 {
                     Tunnel tunnel = gameManager.Tunnels.Find(x => x.id == TileOnRightNow.Tunnel);
                     foreach(Tile tile in tunnel.Tiles)

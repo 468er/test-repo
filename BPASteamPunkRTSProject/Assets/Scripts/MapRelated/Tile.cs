@@ -51,7 +51,7 @@ public class Tile : MonoBehaviour
         //make it visible it's a tunnel
         transform.GetComponent<SpriteRenderer>().color = new Color(.3f, 0, 0);
         //make sure that the tunnel id and i are the same
-        Tunnel = i;
+        //Tunnel = i;
         //set the bool to false to default becuase we check below
         bool GcontainsThisTunnel = false;
         //check each tunnel in game manager, if it contains a tunnel with the same id as this tile then there's no need to do anything and we set to true
@@ -105,9 +105,10 @@ public class Tile : MonoBehaviour
                     }
                 case TileType.MagmaPool:
                     {
-                        Moveable = false;
+                        Moveable = true;
                         SR.color = Color.white;
                         SR.sprite = gameManager.SpriteIamges.Find(x => x.Key == TypeOfTile).Sprite;
+                        SR.sortingOrder = -1;
                         break;
                     }
                 case TileType.SpawnTrigger:
@@ -121,6 +122,7 @@ public class Tile : MonoBehaviour
                         Moveable = true;
                         SR.color = Color.white;
                         SR.sprite = gameManager.SpriteIamges.Find(x => x.Key == TypeOfTile).Sprite;
+                        SR.sortingOrder = -1;
                         break;
                     }
                 case TileType.nothing:

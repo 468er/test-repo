@@ -24,6 +24,14 @@ public class Inventory : MonoBehaviour
     } 
     public void Remove(string Item, float Amount)
     {
-        keyValuePairs[Item] = Amount;
+        if(keyValuePairs[Item] - Amount> 0)
+        {
+            keyValuePairs[Item] -= Amount;
+
+        }
+        else
+        {
+            throw new System.Exception("Error");
+        }
     }
 }

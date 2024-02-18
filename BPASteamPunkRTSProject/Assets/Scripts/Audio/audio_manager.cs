@@ -39,7 +39,6 @@ public class audio_manager : MonoBehaviour
         }
         all_audio_srcs = new AudioSource[amountofsounds];
         int i = 0;
-        DontDestroyOnLoad(gameObject);
         foreach (Sound s in Sounds)
         {
             s.source = gameObject.AddComponent<AudioSource>();
@@ -113,59 +112,6 @@ public class audio_manager : MonoBehaviour
     }
 
 
-    void OnLevelWasLoaded(int level)
-    {
-        switch (level)
-        {
-            default:
-                if (true)
-                {
-                    //pause_behaivor final_audio_script = GameObject.Find("Slider").GetComponent<pause_behaivor>();
-                    //pause_behaivor ooga_audio_script = GameObject.Find("Slider (1)").GetComponent<pause_behaivor>();
-                    //pause_behaivor inga_audioscript = GameObject.Find("Slider (2)").GetComponent<pause_behaivor>();
-                    //final_audio_script.on_value_changed_is_true = false;
-                    //ooga_audio_script.on_value_changed_is_true = false;
-                    inga_audioscript.on_value_changed_is_true = false;
-                    //Stop("choosing_cow_theme");
-                    //TextMeshProUGUI final_audio_txt;
-                    //Slider final_audio_slider;
-                    //TextMeshProUGUI ooga_audio_txt;
-                    //Slider ooga_audio_slider;
-                    //TextMeshProUGUI inga_audio_txt;
-                    //Slider inga_audio_slider;
-                    //final_audio_slider = GameObject.Find("Slider").GetComponent<Slider>();
-                    //int Final_volume;
-                    //Final_volume = (int)(AudioListener.volume * 100f);
-                    //final_audio_txt = GameObject.Find("Final Audio 2").GetComponent<TextMeshProUGUI>();
-                    //final_audio_txt.text = (AudioListener.volume * 100f) + "";
-                    //final_audio_slider.value = Final_volume;
-                    //ooga_audio_slider = GameObject.Find("Slider (1)").GetComponent<Slider>();
-                    //ooga_audio_txt = GameObject.Find("oogatext").GetComponent<TextMeshProUGUI>();
-                    //Final_volume = (int)(Sounds[1].source.volume * 100);
-                    //ooga_audio_txt.text = "" + Final_volume;
-                    //ooga_audio_slider.value = Final_volume;
-                    //inga_audio_slider = GameObject.Find("Slider (2)").GetComponent<Slider>();
-                    //inga_audio_txt = GameObject.Find("ingatext").GetComponent<TextMeshProUGUI>();
-                    int Final_volume = (int)(PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name, 1f) * 100);
-                    inga_audio_slider.value = Final_volume;
-                    inga_audio_txt.text = Final_volume.ToString();
-                    Stop("choosing_cow_theme");
-                    inga_audioscript.on_value_changed_is_true = true;
-                    //final_audio_script.on_value_changed_is_true = true;
-                    //ooga_audio_script.on_value_changed_is_true = true;
-                }
-
-                break;
-            case 1:
-                Stop("MainMenu");
-                Play("choosing_cow_theme");
-                all_button_toggle_sliders = GameObject.Find("Content").GetComponentsInChildren<Slider>();
-                //Debug.Log("Insantiating sliders");
-                break;
-
-
-        }
-    }
 
     public void Play(string name)
     {

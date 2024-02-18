@@ -2,17 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildingSaveFileOBJ : MonoBehaviour
+public class BuildingSaveFileOBJ
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+    int[] position;
+    float health;
+    public Vector3 realPosition;
+    public UnitType unitType;
+    public BuildingSaveFileOBJ(int[] Position, float Health, UnitType _unitType, Vector3 _realposition)
     {
-        
+        position = Position;
+        health = Health;
+        unitType = _unitType;
+        realPosition = _realposition;
+    }
+    public int[] GetPos()
+    {
+        return position;
+    }
+    public float getHealth()
+    {
+
+        return health;
     }
 }

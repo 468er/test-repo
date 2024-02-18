@@ -53,6 +53,7 @@ public class ResourceUnpacker : MonoBehaviour
                 }
             }
         }
+        GetComponent<ResourceDep>().Player1 = player;
     }
 
 }
