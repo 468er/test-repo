@@ -360,11 +360,7 @@ public class PlayerController : MonoBehaviour
     }
     public void NewMove(Vector3 destination, List<GameObject> hits, Unit Unit, TileInMemory lastTile, GameObject unit)
     {
-        Coroutine test = PrepareMoveOrders(destination, hits, Unit.position, Unit.transform.position, Unit.positionAsVector3, lastTile, true, unit);
-        if (test != null)
-        {
-            unit.GetComponent<Unit>().movingRoutine = test;
-        }
+        PrepareMoveOrders(destination, hits, Unit.position, Unit.transform.position, Unit.positionAsVector3, lastTile, true, unit);
     }
     ONETWOTHREE MoveUnit(Vector3 destination, int[] destinationTile, int[] Position, Vector3 uPos , Vector3 PosAsVec3, bool normal)
     {
@@ -681,7 +677,10 @@ public class PlayerController : MonoBehaviour
                                                     }
                                                 }
                                                 ReOrganized.Sort();
-                                                newestTile = new TileInMemory(1, ReOrganized[0].h, new int[] { newTile.fillLocation[0], newTile.fillLocation[1], newTile.fillLocation[2] }, newTile.x, newTile.y, newTile.layer, newTile.z);
+                                                if(ReOrganized.Count > 0 && newTile.fillLocation.Length > 0)
+                                                {
+                                                    newestTile = new TileInMemory(1, ReOrganized[0].h, new int[] { newTile.fillLocation[0], newTile.fillLocation[1], newTile.fillLocation[2] }, newTile.x, newTile.y, newTile.layer, newTile.z);
+                                                }
                                             }
                                             //for each tunnel, if it contains exit layer, an contains entrance layer, it needs to do all combinatiosn. So, I guess creating a new tunnel class with only one entrance and exit, length, and distance from dest is the way to go.
                                         }

@@ -34,4 +34,11 @@ public class Inventory : MonoBehaviour
             throw new System.Exception("Error");
         }
     }
+    public void Update()
+    {
+        foreach(PanelsWithOreType ore in InventoryItems)
+        {
+            ore.Item.transform.GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = keyValuePairs[ore.Type.ToString()].ToString();
+        }
+    }
 }

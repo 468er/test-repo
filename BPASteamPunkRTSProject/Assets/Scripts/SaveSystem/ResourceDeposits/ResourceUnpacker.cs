@@ -48,7 +48,7 @@ public class ResourceUnpacker : MonoBehaviour
                     ResourceDep unit = gameObject.AddComponent<ResourceDep>();
                     unit.Amount = obj.Amount;
                     unit.MaxHealth = obj.MaxHealth;
-
+                    unit._Type = obj._Type;
                   unit.Player1 = player;
                 }
             }
