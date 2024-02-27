@@ -79,9 +79,19 @@ public class PlayerController : MonoBehaviour
             pos = new int[] { 0, 0, 0 };
         }
         //if the layer distance is greater than one, just try to get to the next layer
-        for (int a = 0; a < Mathf.Abs(destination.z - position[2]) - 1; a ++)
+        for (int a = 0; a < Mathf.Abs(destination.z - position[2]); a ++)
         {
-            moveOrders.Add(MoveUnit(destination, pos, position, Pos, posAsVec3, false));
+            if(a > 0)
+            {
+                int potentialTilesCount = moveOrders[moveOrders.Count - 1].PotentialTiles.Count;
+                var potentialTile = moveOrders[moveOrders.Count - 1].PotentialTiles[potentialTilesCount - 1];
+                GameObject tile = map[potentialTile.locationAsArr[0], potentialTile.locationAsArr[1], potentialTile.locationAsArr[2]];
+                moveOrders.Add(MoveUnit(destination, pos, potentialTile.locationAsArr, tile.transform.position, potentialTile.locationAsVector3, false));
+            }
+            else
+            {
+                moveOrders.Add(MoveUnit(destination, pos, position, Pos, posAsVec3, false));
+            }
         }
         if(moveOrders.Count > 0)
         {
@@ -108,6 +118,7 @@ public class PlayerController : MonoBehaviour
 
             }
         }
+        moveOrders.Clear();
         if(moveprepared != null)
         {
             moveOrders.Clear();
@@ -187,13 +198,88 @@ public class PlayerController : MonoBehaviour
             List<GameObject> hitsToGOBJ = new List<GameObject>();
             for (int i = 0; i < hits.Length; i++)
             {
-                hitsToGOBJ[i] = hits[i].transform.gameObject;
+                hitsToGOBJ.Add(hits[i].transform.gameObject);
             }
-            GameObject SelectedObject = null;
-            Vector3 destination;
-            //takes the array value of the hex that has been selected, and converts it to it's real world position.
-            destination = new Vector3(hits[0].transform.position.x, hits[0].transform.position.y / 0.86602540378443864676372317075294f, hits[0].transform.GetComponent<Tile>().position[2]);
-            OrderUnits(destination, hitsToGOBJ, selectedUnits);
+            //for(int i = 0; i < hits.Length; i++)
+            //{
+            //    hitsToGOBJ.Add( hits[i].transform.gameObject);
+            //}
+            foreach (GameObject unit1 in hitsToGOBJ)
+            {
+                switch (unit1.transform.tag)
+                {
+                    case "Unit":
+                        Unit unit2 = unit1.transform.GetComponent<Unit>();
+                        if (unit2.isEnemy)
+                        {
+                            foreach (GameObject unit in selectedUnits)
+                            {
+                                if (unit != null)
+                                {
+                                    unit.GetComponent<Unit>().UseAbility(unit2.gameObject, false);
+
+                                }
+                                else
+                                {
+                                    selectedUnits.Remove(unit);
+                                }
+                            }
+                        }
+                        else
+                        {
+
+                        }
+                        break;
+                    case "Building":
+                        Building unit3 = unit1.transform.GetComponent<Building>();
+                        if (unit3.isEnemy)
+                        {
+                            foreach (GameObject unit in selectedUnits)
+                            {
+                                if (unit != null)
+                                {
+                                    unit.GetComponent<Unit>().UseAbility(unit3.gameObject, false);
+                                }
+                                else
+                                {
+                                    selectedUnits.Remove(unit);
+                                }
+                            }
+                        }
+                        else
+                        {
+
+                        }
+                        break;
+                    case "ResourceDep":
+                        ResourceDep unit4 = unit1.transform.GetComponent<ResourceDep>();
+                        foreach (GameObject unit in selectedUnits)
+                        {
+                            if (unit != null)
+                            {
+                                unit.GetComponent<Unit>().UseAbility(unit4.gameObject, false);
+                            }
+                            else
+                            {
+                                selectedUnits.Remove(unit);
+                            }
+                        }
+                        break;
+                    case "Tile":
+
+                        GameObject SelectedObject = null;
+                        Vector3 destination;
+                        //takes the array value of the hex that has been selected, and converts it to it's real world position.
+                        destination = new Vector3(unit1.transform.position.x, unit1.transform.position.y / 0.86602540378443864676372317075294f, unit1.transform.GetComponent<Tile>().position[2]);
+
+                        OrderUnits(destination, hitsToGOBJ, selectedUnits);
+                        break;
+                }
+
+
+
+            }
+            //if clicking on unit 
 
         }
         //right click check
@@ -273,12 +359,12 @@ public class PlayerController : MonoBehaviour
                                 }
                                 break;
                             case "Tile":
-
+                            //Case of selected Tile
                                 GameObject SelectedObject = null;
                                 Vector3 destination;
                                 //takes the array value of the hex that has been selected, and converts it to it's real world position.
                                 destination = new Vector3(unit1.transform.position.x, unit1.transform.position.y / 0.86602540378443864676372317075294f, unit1.transform.GetComponent<Tile>().position[2]);
-
+                                //Orders selected Units to Tile.
                                 OrderUnits(destination, hitsToGOBJ, selectedUnits);
                                 break;
                         }

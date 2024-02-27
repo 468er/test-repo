@@ -99,7 +99,7 @@ public class LT_G3_U
         unit1 = unit;
     }
 }
-public class TunnelInMemory
+public class TunnelInMemory : IComparable<TunnelInMemory>
 {
     public int id;
     public Tile Entrance;

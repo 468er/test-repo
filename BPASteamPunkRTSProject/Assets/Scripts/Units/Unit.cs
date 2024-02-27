@@ -265,8 +265,8 @@ public class Unit : MonoBehaviour
                 List<GameObject> list2 = new List<GameObject>();
                 list2.Add(this.gameObject);
                 StopAfterTargetDeaths = true;
-               
-                user.OrderUnits(receiver.transform.position, list, list2);
+                //ant moves to where the target is
+                user.OrderUnits(MappingTools.WorldPositionArrayToVector3(receiver.GetComponent<Pathing>().position), list, list2);
             }
         }
     }  
