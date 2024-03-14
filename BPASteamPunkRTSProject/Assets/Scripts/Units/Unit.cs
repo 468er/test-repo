@@ -32,6 +32,8 @@ public class Unit : MonoBehaviour
     public GameObject[,,] map;
     public bool inRange = false;
     Rigidbody2D rigidbody2D;
+
+    public  bool firstFrame;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -87,7 +89,22 @@ public class Unit : MonoBehaviour
                     if (transform.position != map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position)
                     {
                         transform.position = Vector3.MoveTowards(transform.position, map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].transform.position, moveSpeed * Time.deltaTime);
-                        
+                        if(firstFrame == false)
+                    {
+                        firstFrame = true;
+                        CurrentTile = map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].GetComponent<Tile>();
+                        float angle = Mathf.Atan2(CurrentTile.transform.position.y - transform.position.y, CurrentTile.transform.position.x - transform.position.x);
+                        angle = (angle * 180) / Mathf.PI;
+                        angle = angle + (90);
+                        angle = angle - transform.rotation.eulerAngles.z;
+                        transform.Rotate(new Vector3(0, 0, angle));
+                        //rotation
+                    }
+
+                    //Vector3 unNormalized = new Vector3(CurrentTile.transform.position.x - transform.position.x, CurrentTile.transform.position.y - transform.position.y, 0);
+                    //unNormalized = unNormalized.normalized;
+                    //Quaternion quaternion = Quaternion.FromToRotation(transform.rotation.eulerAngles, unNormalized);
+                    //transform.rotation =  Quaternion.RotateTowards(Quaternion.identity, quaternion, 1);
                     //cound't figure out how to get rotation to work so I gave up.
                     //if(transform.rotation.eulerAngles.z != AngleBetween + 90)
                     //{
@@ -101,14 +118,25 @@ public class Unit : MonoBehaviour
                 }
                     else
                     {
-                        CurrentTile.Ability(this);
+                   
+                    CurrentTile.Ability(this);
                         position = new int[] { moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer };
                         positionAsVector3 = new Vector3(moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer);
                         lastTile = moveTiles[a];
                         moveTiles.Remove(moveTiles[a]);
-                        if(moveTiles.Count == 0)
+                    if(moveTiles.Count > 0)
+                    {
+                        CurrentTile = map[moveTiles[a].x, moveTiles[a].y, moveTiles[a].layer].GetComponent<Tile>();
+                    }
+                    float angle = Mathf.Atan2(CurrentTile.transform.position.y - transform.position.y, CurrentTile.transform.position.x - transform.position.x);
+                    angle = (angle * 180) / Mathf.PI;
+                    angle = angle + (90);
+                    angle = angle - transform.rotation.eulerAngles.z;
+                    transform.Rotate(new Vector3(0, 0, angle));
+                    if (moveTiles.Count == 0)
                         {
                         moving = false;
+                        firstFrame = false;
                         }
                     }
                 }
@@ -116,8 +144,9 @@ public class Unit : MonoBehaviour
             if(moveTiles.Count == 0)
         {
             moving = false;
+            firstFrame = false;
         }
-            for (int i = 0; i < targets.Count; i++)
+        for (int i = 0; i < targets.Count; i++)
             {
                 if (targets[i] == null)
                 {
@@ -205,7 +234,7 @@ public class Unit : MonoBehaviour
         GameObject building = Instantiate(buildingPrefab, this.transform.position, Quaternion.identity);
         building.GetComponent<Pathing>().position = position;
         BuildingUnpackager building1 = building.GetComponent<BuildingUnpackager>();
-        building1.Load();
+        building1.Load(null);
         Destroy(this.gameObject);
     }
     public void UseAbility(GameObject receiver, bool idk)

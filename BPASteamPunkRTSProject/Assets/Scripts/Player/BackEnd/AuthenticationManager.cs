@@ -28,7 +28,7 @@ public class AuthenticationManager : MonoBehaviour
         try
         {
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
-            print("Player id: " + AuthenticationService.Instance.PlayerId);
+            Debug.Log("Player id: " + AuthenticationService.Instance.PlayerId);
             playerId = AuthenticationService.Instance.PlayerId;
         }
         catch (AuthenticationException ex)

@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Services.CloudCode;
 using Newtonsoft.Json;
-
+using TMPro;
  public class BuildingUnpackager : MonoBehaviour
 {
     public BuildingIdentity Indentifier;
     public bool loadFromDatabase;
     // Start is called before the first frame update
-    public async void Load()
+    public async void Load(TMP_InputField jSonOutput)
     {
         if (loadFromDatabase)
         {
             var test = await CloudCodeService.Instance.CallEndpointAsync("Buildings");
 
+            jSonOutput.text = test;
             int startIndex = test.IndexOf(":") + 3;
             int endIndex = test.Length - (4 + startIndex);
             string data = test.Substring(startIndex, endIndex);

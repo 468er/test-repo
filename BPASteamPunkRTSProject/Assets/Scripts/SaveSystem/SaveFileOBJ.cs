@@ -6,9 +6,9 @@ public class SaveFileOBJ
 {
    public List<UnitSaveFileOBJ> SaveUnits = new List<UnitSaveFileOBJ>();
    public List<BuildingSaveFileOBJ> SaveBuildings = new List<BuildingSaveFileOBJ>();
-   public List<ResourceDep> SaveResourceDeps = new List<ResourceDep>();
+   public List<ResourceSaveOJB> SaveResourceDeps = new List<ResourceSaveOJB>();
 
-   public SaveFileOBJ(List<UnitSaveFileOBJ> SaveUnits2, List<BuildingSaveFileOBJ> SaveBuildings2, List<ResourceDep> SaveResourceDeps2)
+   public SaveFileOBJ(List<UnitSaveFileOBJ> SaveUnits2, List<BuildingSaveFileOBJ> SaveBuildings2, List<ResourceSaveOJB> SaveResourceDeps2)
     {
         SaveUnits = SaveUnits2;
         SaveBuildings = SaveBuildings2;

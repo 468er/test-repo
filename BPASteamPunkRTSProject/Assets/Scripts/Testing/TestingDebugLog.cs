@@ -62,6 +62,9 @@ public class TestingDebugLog : MonoBehaviour
             TextWriter tw = new StreamWriter(LogFileName, true);
             tw.WriteLine("[" + System.DateTime.Now + "]" + condition + ". StackTrace: " + stackTrace + recoverableStatus + ". Type: " + type.ToString() + "\n");
             tw.Close();
+
+            Show();
+            errorText.text = "Log : " + condition + ". StackTrace: " + stackTrace;
         }
     }
     private void OnDestroy()

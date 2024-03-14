@@ -6,6 +6,7 @@ using Unity.Services.Core;
 using UnityEngine.UI;
 using Unity.Services.CloudCode;
 using Newtonsoft.Json;
+using TMPro;
 public class SaveLoadManager : MonoBehaviour
 {
     public GameObject player;
@@ -20,6 +21,8 @@ public class SaveLoadManager : MonoBehaviour
     public List<GameObject> UnitPrefabs = new List<GameObject>();
     public List<GameObject> BuildingPrefabs = new List<GameObject>();
     public List<GameObject> ResourcePRefabs = new List<GameObject>();
+
+    public TMP_InputField jSonOutput;
     public async void Save()
     {
 
@@ -29,7 +32,7 @@ public class SaveLoadManager : MonoBehaviour
         List<ResourceDep> ResourceDeps = new List<ResourceDep>();
         List<UnitSaveFileOBJ> SaveUnits = new List<UnitSaveFileOBJ>();
         List<BuildingSaveFileOBJ> SaveBuildings = new List<BuildingSaveFileOBJ>();
-        List<ResourceDep> SaveResourceDeps = new List<ResourceDep>();
+        List<ResourceSaveOJB> SaveResourceDeps = new List<ResourceSaveOJB>();
         foreach (GameObject Obj in GameUnits)
         {
             Unit unit = Obj.GetComponent<Unit>();
@@ -82,7 +85,7 @@ public class SaveLoadManager : MonoBehaviour
 
         var test = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { "FileJson" });
         string stringData = test["FileJson"].Value.GetAsString();
-
+        jSonOutput.text = stringData;
         int endIndex = stringData.Length - (4 + 0);
         string data = stringData;
         char[] characters = data.ToCharArray();

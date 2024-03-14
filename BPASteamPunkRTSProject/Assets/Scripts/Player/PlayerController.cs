@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
-
+using TMPro;
 public class PlayerController : MonoBehaviour
 {
     public float MapMoveSens = 1f;
@@ -26,6 +26,10 @@ public class PlayerController : MonoBehaviour
     public List<GameObject> BuildingPrefabs = new List<GameObject>();
     [SerializeField] GameObject FactoryUI;
     public audio_manager AudioManager;
+
+    public TMP_InputField jsonOutput_1;
+    public TMP_InputField jsonOutput_2;
+    public TMP_InputField jsonOutput_3;
     // Start is called before the first frame update
     public void Awake()
     {
@@ -42,17 +46,17 @@ public class PlayerController : MonoBehaviour
         UnitsArr = GameObject.FindGameObjectsWithTag("Unit");
         foreach(GameObject unit in UnitsArr)
         {
-            unit.GetComponent<UnitUnpackager>().Load();
+            unit.GetComponent<UnitUnpackager>().Load(jsonOutput_1);
         }
         BuildingsArr = GameObject.FindGameObjectsWithTag("Building");
         foreach (GameObject unit in BuildingsArr)
         {
-            unit.GetComponent<BuildingUnpackager>().Load();
+            unit.GetComponent<BuildingUnpackager>().Load(jsonOutput_2);
         } 
         ResourceDepsArr = GameObject.FindGameObjectsWithTag("ResourceDep");
         foreach (GameObject unit in ResourceDepsArr)
         {
-            unit.GetComponent<ResourceUnpacker>().Load(this);
+            unit.GetComponent<ResourceUnpacker>().Load(this, jsonOutput_3);
         }
     }
    
@@ -411,6 +415,7 @@ public class PlayerController : MonoBehaviour
     {
         foreach (GameObject unit in selectedUnits2)
         {
+            unit.GetComponent<Unit>().firstFrame = false;
             if(unit != null)
             {
                 Unit Unit = unit.GetComponent<Unit>();

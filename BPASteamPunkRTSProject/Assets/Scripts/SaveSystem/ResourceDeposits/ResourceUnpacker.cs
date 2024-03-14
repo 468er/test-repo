@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Services.CloudCode;
 using Newtonsoft.Json;
-
+using TMPro;
 public class ResourceUnpacker : MonoBehaviour
 {
     public Resource_Type Indentifier;
-    public bool loadFromDatabase;
+     bool loadFromDatabase = false;
     // Start is called before the first frame update
-    public async void Load(PlayerController player)
+    public async void Load(PlayerController player, TMP_InputField jSonOutput)
     {
         if (loadFromDatabase)
         {
             var test = await CloudCodeService.Instance.CallEndpointAsync("ResourceDeps");
+            jSonOutput.text = test;
 
             int startIndex = test.IndexOf(":") + 3;
             int endIndex = test.Length - (4 + startIndex);

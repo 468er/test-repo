@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Services.CloudCode;
 using Newtonsoft.Json;
-
+using TMPro;
 public class UnitUnpackager : MonoBehaviour
 {
     public UnitType Indentifier;
     public bool loadFromDatabase;
     // Start is called before the first frame update
-    public async void Load()
+    public async void Load(TMP_InputField jSonOutput)
     {
         if (loadFromDatabase)
         {
             int[] position = GetComponent<Pathing>().position;
             var test = await CloudCodeService.Instance.CallEndpointAsync("Units");
+            jSonOutput.text = test;
 
             int startIndex = test.IndexOf(":") + 3;
             int endIndex = test.Length - (4 + startIndex);
