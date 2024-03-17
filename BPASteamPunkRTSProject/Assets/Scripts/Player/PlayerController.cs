@@ -31,6 +31,10 @@ public class PlayerController : MonoBehaviour
     public TMP_InputField jsonOutput_2;
     public TMP_InputField jsonOutput_3;
     // Start is called before the first frame update
+    private void Start()
+    {
+        Load();
+    }
     public void Awake()
     {
         GameObject.Find("Button (3)").GetComponent<Button>().onClick.AddListener(() =>

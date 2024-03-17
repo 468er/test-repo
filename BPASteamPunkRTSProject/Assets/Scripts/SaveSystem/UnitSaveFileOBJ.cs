@@ -7,9 +7,9 @@ public class UnitSaveFileOBJ
 
     int[] position;
     float health;
-    public Vector3 realPosition;
+    public CustomVector3 realPosition;
     public UnitType unitType;
-    public UnitSaveFileOBJ(int[] Position, float Health, UnitType _unitType, Vector3 _realposition)
+    public UnitSaveFileOBJ(int[] Position, float Health, UnitType _unitType, CustomVector3 _realposition)
     {
         position = Position;
         health = Health;
@@ -24,5 +24,17 @@ public class UnitSaveFileOBJ
     {
 
         return health;
+    }
+}
+public class CustomVector3
+{
+    public float x;
+    public float y;
+    public float z;
+    public CustomVector3(float X, float Y, float Z)
+    {
+        x = X;
+        y = Y;
+        z = Z;
     }
 }

@@ -27,16 +27,30 @@ public class SaveLoadManager : MonoBehaviour
     {
 
         GameObject[] GameUnits;
+        GameObject[] Buildingss;
+        GameObject[] ResourceDepss;
         GameUnits = GameObject.FindGameObjectsWithTag("Unit");
-        List<Building> Buildings = new List<Building>();
-        List<ResourceDep> ResourceDeps = new List<ResourceDep>();
+        Buildingss = GameObject.FindGameObjectsWithTag("Building");
+        ResourceDepss = GameObject.FindGameObjectsWithTag("ResourceDep");
         List<UnitSaveFileOBJ> SaveUnits = new List<UnitSaveFileOBJ>();
         List<BuildingSaveFileOBJ> SaveBuildings = new List<BuildingSaveFileOBJ>();
         List<ResourceSaveOJB> SaveResourceDeps = new List<ResourceSaveOJB>();
         foreach (GameObject Obj in GameUnits)
         {
             Unit unit = Obj.GetComponent<Unit>();
-            UnitSaveFileOBJ obj = new UnitSaveFileOBJ(unit.position, unit.Health, unit.GetComponent<Unit>().Indentifier, unit.transform.position);
+            UnitSaveFileOBJ obj = new UnitSaveFileOBJ(unit.position, unit.Health, unit.GetComponent<Unit>().Indentifier, new CustomVector3( unit.transform.position.x, unit.transform.position.y, unit.transform.position.z));
+            SaveUnits.Add(obj);
+        } 
+        foreach (GameObject Obj in Buildingss)
+        {
+            Building unit = Obj.GetComponent<Building>();
+            BuildingSaveFileOBJ obj = new BuildingSaveFileOBJ(unit.GetComponent<Pathing>().position, unit.Health, unit.GetComponent<Building>()._type, new CustomVector3( unit.transform.position.x, unit.transform.position.y, unit.transform.position.z));
+            SaveBuildings.Add(obj);
+        } 
+        foreach (GameObject Obj in ResourceDepss)
+        {
+            ResourceDep unit = Obj.GetComponent<ResourceDep>();
+            ResourceSaveOJB obj = new ResourceSaveOJB(unit.GetComponent<Pathing>().position, unit.Health, unit.GetComponent<ResourceDep>().Indentifier, new CustomVector3( unit.transform.position.x, unit.transform.position.y, unit.transform.position.z));
             SaveUnits.Add(obj);
         } 
         //foreach (Building unit in Buildings)
@@ -49,7 +63,7 @@ public class SaveLoadManager : MonoBehaviour
         //    UnitSaveFileOBJ obj = new UnitSaveFileOBJ(unit.GetComponent<Pathing>().position, unit.Health);
  
         //}
-        SaveFileOBJ baseSaveFile = new SaveFileOBJ(SaveUnits, SaveBuildings, SaveResourceDeps);
+        SaveFileOBJ baseSaveFile = new SaveFileOBJ(SaveUnits, SaveBuildings, SaveResourceDeps, player.GetComponent<Inventory>().keyValuePairs);
         //UnitSaveObject a = new UnitSaveObject(player.GetComponent<SpriteRenderer>().color, player.transform.position);
         //a.color = new Color(1, 1, 1);
         var json = JsonConvert.SerializeObject(baseSaveFile);
@@ -85,7 +99,7 @@ public class SaveLoadManager : MonoBehaviour
 
         var test = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { "FileJson" });
         string stringData = test["FileJson"].Value.GetAsString();
-        jSonOutput.text = stringData;
+        //jSonOutput.text = stringData;
         int endIndex = stringData.Length - (4 + 0);
         string data = stringData;
         char[] characters = data.ToCharArray();
@@ -108,11 +122,12 @@ public class SaveLoadManager : MonoBehaviour
         var Attempt = JsonConvert.DeserializeObject<SaveFileOBJ>(pureJson);
         foreach(var unit in Attempt.SaveUnits)
         {
-          GameObject create = Instantiate(UnitPrefabs.Find(x => x.GetComponent<UnitUnpackager>().Indentifier == unit.unitType), unit.realPosition, Quaternion.identity);
-            create.transform.position = unit.realPosition;
+          GameObject create = Instantiate(UnitPrefabs.Find(x => x.GetComponent<UnitUnpackager>().Indentifier == unit.unitType), new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z), Quaternion.identity);
+            create.transform.position = new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z) ;
             create.GetComponent<UnitUnpackager>().Load(unit.GetPos());
             create.GetComponent<Unit>().Health = unit.getHealth();
         }
+        player.GetComponent<Inventory>().keyValuePairs = Attempt.keyValuePairs;
         print(test);
     }
     private void Awake()
