@@ -50,8 +50,8 @@ public class SaveLoadManager : MonoBehaviour
         foreach (GameObject Obj in ResourceDepss)
         {
             ResourceDep unit = Obj.GetComponent<ResourceDep>();
-            ResourceSaveOJB obj = new ResourceSaveOJB(unit.GetComponent<Pathing>().position, unit.Health, unit.GetComponent<ResourceDep>().Indentifier, new CustomVector3( unit.transform.position.x, unit.transform.position.y, unit.transform.position.z));
-            SaveUnits.Add(obj);
+            //ResourceSaveOJB obj = new ResourceSaveOJB(unit.GetComponent<Pathing>().position, unit.Health, unit.GetComponent<ResourceDep>()._Type, new CustomVector3(unit.transform.position.x, unit.transform.position.y, unit.transform.position.z));
+            //SaveUnits.Add(obj);
         } 
         //foreach (Building unit in Buildings)
         //{
@@ -228,11 +228,11 @@ public class SaveLoadManager : MonoBehaviour
     {
         foreach(ResourceDep unit in Resources)
         {
-            ResourceSaveOJB obj = new ResourceSaveOJB();
-            obj.MaxHealth = unit.MaxHealth;
-            obj.Amount = unit.Amount;
-            obj._Type = unit._Type;
-            ResourcesAFter.Add(obj);
+            //ResourceSaveOJB obj = new ResourceSaveOJB();
+            //obj.MaxHealth = unit.MaxHealth;
+            //obj.Amount = unit.Amount;
+            //obj._Type = unit._Type;
+            //ResourcesAFter.Add(obj);
         }
         //UnitSaveObject a = new UnitSaveObject(player.GetComponent<SpriteRenderer>().color, player.transform.position);
         //a.color = new Color(1, 1, 1);
