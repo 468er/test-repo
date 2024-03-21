@@ -13,7 +13,6 @@ public class SaveLoadManager : MonoBehaviour
     public List<Unit> Units = new List<Unit>();
     public List<UnitSavOBJ> UnitsAfter = new List<UnitSavOBJ>();
     public List<Building> Buildings = new List<Building>();
-    public List<BuildingSaveOBJ> BuildingsAfter = new List<BuildingSaveOBJ>();
     public string output;
     public List<ResourceDep> Resources = new List<ResourceDep>();
     public List<ResourceSaveOJB> ResourcesAFter = new List<ResourceSaveOJB>();
@@ -44,14 +43,14 @@ public class SaveLoadManager : MonoBehaviour
         foreach (GameObject Obj in Buildingss)
         {
             Building unit = Obj.GetComponent<Building>();
-            BuildingSaveFileOBJ obj = new BuildingSaveFileOBJ(unit.GetComponent<Pathing>().position, unit.Health, unit.GetComponent<Building>()._type, new CustomVector3( unit.transform.position.x, unit.transform.position.y, unit.transform.position.z));
+            BuildingSaveFileOBJ obj = new BuildingSaveFileOBJ(unit.GetComponent<Pathing>().position, unit.Health, unit.GetComponent<Building>()._type, new CustomVector3( unit.transform.position.x, unit.transform.position.y, unit.transform.position.z), unit.moveSpeed, unit.isEnemy, unit.FireInterval, unit.Manufacturing);
             SaveBuildings.Add(obj);
         } 
         foreach (GameObject Obj in ResourceDepss)
         {
             ResourceDep unit = Obj.GetComponent<ResourceDep>();
-            //ResourceSaveOJB obj = new ResourceSaveOJB(unit.GetComponent<Pathing>().position, unit.Health, unit.GetComponent<ResourceDep>()._Type, new CustomVector3(unit.transform.position.x, unit.transform.position.y, unit.transform.position.z));
-            //SaveUnits.Add(obj);
+            ResourceSaveOJB obj = new ResourceSaveOJB( unit.GetComponent<ResourceDep>().Amount, unit.Health, unit.GetComponent<ResourceDep>()._Type, new CustomVector3(unit.transform.position.x, unit.transform.position.y, unit.transform.position.z));
+            SaveResourceDeps.Add(obj);
         } 
         //foreach (Building unit in Buildings)
         //{
@@ -126,6 +125,20 @@ public class SaveLoadManager : MonoBehaviour
             create.transform.position = new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z) ;
             create.GetComponent<UnitUnpackager>().Load(unit.GetPos());
             create.GetComponent<Unit>().Health = unit.getHealth();
+        }  
+        foreach(var unit in Attempt.SaveBuildings)
+        {
+          GameObject create = Instantiate(UnitPrefabs.Find(x => x.GetComponent<BuildingUnpackager>().Indentifier == unit.unitType), new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z), Quaternion.identity);
+            create.transform.position = new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z) ;
+            create.GetComponent<BuildingUnpackager>().Load(null);
+            create.GetComponent<Unit>().Health = unit.getHealth();
+        }       
+        foreach(var unit in Attempt.SaveUnits)
+        {
+          GameObject create = Instantiate(UnitPrefabs.Find(x => x.GetComponent<UnitUnpackager>().Indentifier == unit.unitType), new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z), Quaternion.identity);
+            create.transform.position = new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z) ;
+            create.GetComponent<UnitUnpackager>().Load(unit.GetPos());
+            create.GetComponent<Unit>().Health = unit.getHealth();
         }
         player.GetComponent<Inventory>().keyValuePairs = Attempt.keyValuePairs;
         print(test);
@@ -193,36 +206,36 @@ public class SaveLoadManager : MonoBehaviour
     }
     public void SaveBuildingTypes()
     {
-        foreach(Building unit in Buildings)
-        {
-            BuildingSaveOBJ obj = new BuildingSaveOBJ();
-            obj.moveSpeed = unit.moveSpeed;
-            obj.Health = unit.Health;
-            obj._type = unit._type;
-            BuildingsAfter.Add(obj);
-        }
-        //UnitSaveObject a = new UnitSaveObject(player.GetComponent<SpriteRenderer>().color, player.transform.position);
-        //a.color = new Color(1, 1, 1);
-        string json = JsonConvert.SerializeObject(BuildingsAfter);
-        char[] characters = json.ToCharArray();
-        List<char> list = new List<char>();
-        foreach(char item in characters)
-        {
-            if(item == '"')
-            {
-                list.Add('\\');
-                list.Add(item);
-            }
-            else
-            {
-                list.Add(item);
-            }
-        }
-        char[] listAsArr = list.ToArray();
-        string pureJson = new string(listAsArr);
-        print(pureJson);
-        output = pureJson;
-        print("Input this into the database!");
+        //foreach(Building unit in Buildings)
+        //{
+        //    BuildingSaveOBJ obj = new BuildingSaveOBJ();
+        //    obj.moveSpeed = unit.moveSpeed;
+        //    obj.Health = unit.Health;
+        //    obj._type = unit._type;
+        //    BuildingsAfter.Add(obj);
+        //}
+        ////UnitSaveObject a = new UnitSaveObject(player.GetComponent<SpriteRenderer>().color, player.transform.position);
+        ////a.color = new Color(1, 1, 1);
+        //string json = JsonConvert.SerializeObject(BuildingsAfter);
+        //char[] characters = json.ToCharArray();
+        //List<char> list = new List<char>();
+        //foreach(char item in characters)
+        //{
+        //    if(item == '"')
+        //    {
+        //        list.Add('\\');
+        //        list.Add(item);
+        //    }
+        //    else
+        //    {
+        //        list.Add(item);
+        //    }
+        //}
+        //char[] listAsArr = list.ToArray();
+        //string pureJson = new string(listAsArr);
+        //print(pureJson);
+        //output = pureJson;
+        //print("Input this into the database!");
     } 
     public void SaveResourceTypes()
     {

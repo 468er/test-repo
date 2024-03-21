@@ -6,7 +6,8 @@ using Newtonsoft.Json;
 using TMPro;
  public class BuildingUnpackager : MonoBehaviour
 {
-    public BuildingIdentity Indentifier;
+   
+    public building_Type Indentifier;
     public bool loadFromDatabase;
     // Start is called before the first frame update
     public async void Load(TMP_InputField jSonOutput)
@@ -36,10 +37,10 @@ using TMPro;
             char[] listAsArr = list.ToArray();
             string pureJson = new string(listAsArr);
             print("List:" + pureJson);
-            var Attempt = JsonConvert.DeserializeObject<List<BuildingSaveOBJ>>(pureJson);
-            foreach (BuildingSaveOBJ obj in Attempt)
+            var Attempt = JsonConvert.DeserializeObject<List<BuildingSaveFileOBJ>>(pureJson);
+            foreach (BuildingSaveFileOBJ obj in Attempt)
             {
-                if (Indentifier == obj.building)
+                if (Indentifier == obj.unitType)
                 {
                     Building OldUnit = gameObject.GetComponent<Building>();
                     if (OldUnit != null)
@@ -48,8 +49,13 @@ using TMPro;
                     }
                     Building unit = gameObject.AddComponent<Building>();
                     unit.moveSpeed = obj.moveSpeed;
-                    unit.Health = obj.Health;
-                    unit._type = obj._type;
+                    unit.Health = obj.getHealth();
+                    unit._type = obj.unitType;
+                    unit.GetComponent<Pathing>().position = obj.GetPos();
+                    unit.transform.position = new Vector3(obj.realPosition.x, obj.realPosition.y, obj.realPosition.z);
+                    unit.isEnemy = obj.isEnemy;
+                    unit.FireInterval = obj.FireInterval;
+                    unit.Manufacturing = obj.Manufacturing;
 }
             }
         }
