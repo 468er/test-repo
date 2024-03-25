@@ -37,10 +37,10 @@ public class PlayerController : MonoBehaviour
     }
     public void Awake()
     {
-        GameObject.Find("Button (3)").GetComponent<Button>().onClick.AddListener(() =>
-        {
-            Load();
-        });
+        //GameObject.Find("Button (3)").GetComponent<Button>().onClick.AddListener(() =>
+        //{
+        //    Load();
+        //});
         AudioManager = GameObject.Find("AudioManager").GetComponent<audio_manager>();
     }
     public async void Load()

@@ -7,6 +7,8 @@ using UnityEngine.UI;
 using Unity.Services.CloudCode;
 using Newtonsoft.Json;
 using TMPro;
+using UnityEngine.SceneManagement;
+
 public class SaveLoadManager : MonoBehaviour
 {
     public GameObject player;
@@ -22,6 +24,7 @@ public class SaveLoadManager : MonoBehaviour
     public List<GameObject> ResourcePRefabs = new List<GameObject>();
 
     public TMP_InputField jSonOutput;
+    public Button SaveButton;
     public async void Save()
     {
 
@@ -93,60 +96,79 @@ public class SaveLoadManager : MonoBehaviour
         //    UnitSaveObject Attempt = JsonUtility.FromJson<UnitSaveObject>(test) ;
         //    print(test);
     }  
-    public async void Load()
+    public async void Load(SaveFileOBJ Default)
     {
-
-        var test = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { "FileJson" });
-        string stringData = test["FileJson"].Value.GetAsString();
-        //jSonOutput.text = stringData;
-        int endIndex = stringData.Length - (4 + 0);
-        string data = stringData;
-        char[] characters = data.ToCharArray();
-        List<char> list = new List<char>();
-        foreach (char item in characters)
+        SaveFileOBJ Attempt= null;
+        if (Default != null)
         {
-            if (item == '\\')
+            if(Default.ToString().Length > 1)
             {
-
-            }
-            else
-            {
-                list.Add(item);
-
+                Attempt = Default;
             }
         }
-        char[] listAsArr = list.ToArray();
-        string pureJson = new string(listAsArr);
-        print("List:" + pureJson);
-        var Attempt = JsonConvert.DeserializeObject<SaveFileOBJ>(pureJson);
-        foreach(var unit in Attempt.SaveUnits)
+        else
         {
-          GameObject create = Instantiate(UnitPrefabs.Find(x => x.GetComponent<UnitUnpackager>().Indentifier == unit.unitType), new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z), Quaternion.identity);
-            create.transform.position = new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z) ;
+            var test = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { "FileJson" });
+            string stringData = test["FileJson"].Value.GetAsString();
+            //jSonOutput.text = stringData;
+            int endIndex = stringData.Length - (4 + 0);
+            string data = stringData;
+            char[] characters = data.ToCharArray();
+            List<char> list = new List<char>();
+            foreach (char item in characters)
+            {
+                if (item == '\\')
+                {
+
+                }
+                else
+                {
+                    list.Add(item);
+
+                }
+            }
+            char[] listAsArr = list.ToArray();
+            string pureJson = new string(listAsArr);
+            print("List:" + pureJson);
+            Attempt = JsonConvert.DeserializeObject<SaveFileOBJ>(pureJson);
+        }
+        
+        Creation(Attempt);
+    }
+    void Creation(SaveFileOBJ Attempt)
+    {
+        foreach (var unit in Attempt.SaveUnits)
+        {
+            GameObject create = Instantiate(UnitPrefabs.Find(x => x.GetComponent<UnitUnpackager>().Indentifier == unit.unitType), new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z), Quaternion.identity);
+            create.transform.position = new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z);
             create.GetComponent<UnitUnpackager>().Load(unit.GetPos());
             create.GetComponent<Unit>().Health = unit.getHealth();
-        }  
-        foreach(var unit in Attempt.SaveBuildings)
+        }
+        foreach (var unit in Attempt.SaveBuildings)
         {
-          GameObject create = Instantiate(UnitPrefabs.Find(x => x.GetComponent<BuildingUnpackager>().Indentifier == unit.unitType), new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z), Quaternion.identity);
-            create.transform.position = new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z) ;
+            GameObject create = Instantiate(BuildingPrefabs.Find(x => x.GetComponent<BuildingUnpackager>().Indentifier == unit.unitType), new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z), Quaternion.identity);
+            create.transform.position = new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z);
             create.GetComponent<BuildingUnpackager>().Load(null);
-            create.GetComponent<Unit>().Health = unit.getHealth();
-        }       
-        foreach(var unit in Attempt.SaveUnits)
+            create.GetComponent<Building>().Health = unit.getHealth();
+        }
+        foreach (var unit in Attempt.SaveResourceDeps)
         {
-          GameObject create = Instantiate(UnitPrefabs.Find(x => x.GetComponent<UnitUnpackager>().Indentifier == unit.unitType), new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z), Quaternion.identity);
-            create.transform.position = new Vector3(unit.realPosition.x, unit.realPosition.y, unit.realPosition.z) ;
-            create.GetComponent<UnitUnpackager>().Load(unit.GetPos());
-            create.GetComponent<Unit>().Health = unit.getHealth();
+            GameObject create = Instantiate(ResourcePRefabs.Find(x => x.GetComponent<ResourceUnpacker>().Indentifier == unit._Type), new Vector3(unit.Position.x, unit.Position.y, unit.Position.z), Quaternion.identity);
+            create.transform.position = new Vector3(unit.Position.x, unit.Position.y, unit.Position.z);
+            create.GetComponent<ResourceUnpacker>().Load(player.GetComponent<PlayerController>(), null);
+            create.GetComponent<ResourceDep>().Health = unit.MaxHealth;
         }
         player.GetComponent<Inventory>().keyValuePairs = Attempt.keyValuePairs;
-        print(test);
     }
+
     private void Awake()
     {
         try
         {
+          SaveButton.onClick.AddListener(() =>
+            {
+                //Load();
+            });
             GameObject.Find("Button").GetComponent<Button>().onClick.AddListener(() =>
             {
                 SaveUnitTypes();
@@ -269,5 +291,10 @@ public class SaveLoadManager : MonoBehaviour
         print(pureJson);
         output = pureJson;
         print("Input this into the database!");
+    }
+    public void Start()
+    {
+        DontDestroyOnLoad(this);
+        //Load();
     }
 }

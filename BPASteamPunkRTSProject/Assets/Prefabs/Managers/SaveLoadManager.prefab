@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3787979412516151272
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6333762255158924547}
+  - component: {fileID: 2771461842955572517}
+  m_Layer: 0
+  m_Name: SaveLoadManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6333762255158924547
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3787979412516151272}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2771461842955572517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3787979412516151272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac4959be5e63ddc438bd3989a8d7f293, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  Units:
+  - {fileID: 0}
+  - {fileID: 3112171305447075321, guid: 0df3853a636ba0842af4481b352179e2, type: 3}
+  - {fileID: 2745808217256860834, guid: a52e06dcebe689a4bb6606fcb82e9f39, type: 3}
+  - {fileID: 1227315887702221720, guid: 983ae4ad30778634db6cdc10de55d6ba, type: 3}
+  - {fileID: 700709697960920867, guid: 9d428376810b6f744a6595def74c9196, type: 3}
+  - {fileID: 8901342716518940731, guid: d67e6ebda153a1e43a80d58ea8326379, type: 3}
+  - {fileID: 8238242385849768618, guid: 0a6e6816a3015c84db6b469839df65e2, type: 3}
+  Buildings:
+  - {fileID: 0}
+  output: 
+  Resources:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  UnitPrefabs:
+  - {fileID: 1127023166282767275, guid: 0df3853a636ba0842af4481b352179e2, type: 3}
+  - {fileID: 619239250298991707, guid: ecc43b0302946be419ce645ed3c69db8, type: 3}
+  - {fileID: 3791113963438401632, guid: a52e06dcebe689a4bb6606fcb82e9f39, type: 3}
+  - {fileID: 8650627444994652063, guid: 983ae4ad30778634db6cdc10de55d6ba, type: 3}
+  - {fileID: 3722964235189269196, guid: 9d428376810b6f744a6595def74c9196, type: 3}
+  - {fileID: 619239250298991707, guid: d67e6ebda153a1e43a80d58ea8326379, type: 3}
+  - {fileID: 5238176982545015028, guid: 0a6e6816a3015c84db6b469839df65e2, type: 3}
+  BuildingPrefabs:
+  - {fileID: 2189865333342596412, guid: 9be05914d22eac84dbeeff9b10cbfbcf, type: 3}
+  ResourcePRefabs:
+  - {fileID: 7505748674524730295, guid: 284dd38f2b4351742b248cc21667acb7, type: 3}
+  - {fileID: 500734903362080709, guid: 257ee12701cc5224db32299c15c8184c, type: 3}
+  - {fileID: 4513478566064608839, guid: 84b8e40d76b959c449b6b66b8da637ca, type: 3}
+  - {fileID: 3786393488565485976, guid: d3a1eb9a064b3294c90bae933863ea00, type: 3}
+  jSonOutput: {fileID: 0}
+  SaveButton: {fileID: 0}

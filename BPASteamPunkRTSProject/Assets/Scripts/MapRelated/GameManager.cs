@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
@@ -24,6 +25,18 @@ public class GameManager : MonoBehaviour
     public GameObject tilenNumberPrefab;
     public List<ClassWithKeyAndImage> SpriteIamges = new List<ClassWithKeyAndImage>();
     // Start is called before the first frame update
+    private void ChangedActiveScene(Scene current, Scene next)
+    {
+        string currentName = current.name;
+
+        if (currentName == null)
+        {
+            // Scene1 has been removed
+            currentName = "Replaced";
+        }
+
+        Debug.Log("Scenes: " + currentName + ", " + next.name);
+    }
     private void Awake()
     {
         try
@@ -53,6 +66,7 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
+        DontDestroyOnLoad(this);
         Canvas.SetActive(true);
 
         map = new GameObject[x, y, layers];
