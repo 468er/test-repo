@@ -36,6 +36,7 @@ public class Unit : MonoBehaviour
     public  bool firstFrame;
 
     public float baranchor;
+    public float baranchorLiteral;
     public float barMaximum;
     // Start is called before the first frame update
     private void Awake()
@@ -72,7 +73,7 @@ public class Unit : MonoBehaviour
         user = GameObject.Find("Player1").GetComponent<PlayerController>();
         lastFired = Time.time;
         barMaximum = transform.GetChild(0).GetChild(1).localScale.x;
-
+        baranchorLiteral = transform.GetChild(0).transform.GetChild(1).localPosition.x;
 
     }
     // Update is called once per frame
@@ -316,8 +317,8 @@ public class Unit : MonoBehaviour
         if (Health - attacker.GetComponent<Unit>().Damage > 0)
         {
             Health -= attacker.GetComponent<Unit>().Damage;
-            Transform HealthBar = transform.GetChild(0).transform.GetChild(0);
-            baranchor = HealthBar.localPosition.x - ( (Health / MaxHealth) * barMaximum / 2f);
+            Transform HealthBar = transform.GetChild(0).transform.GetChild(1);
+            baranchor = baranchorLiteral - ( (Health / MaxHealth) * barMaximum / 2f);
             HealthBar.transform.localPosition = new Vector3(baranchor, HealthBar.transform.localPosition.y, HealthBar.transform.localPosition.z);
             HealthBar.localScale =  new Vector3(Health / MaxHealth * barMaximum, HealthBar.localScale.y, HealthBar.localScale.z);
             Debug.Log(attacker.gameObject + " <- Hit ->" + this.gameObject + "for " + attacker.GetComponent<Unit>().Damage + "reducing the health to " + Health);
