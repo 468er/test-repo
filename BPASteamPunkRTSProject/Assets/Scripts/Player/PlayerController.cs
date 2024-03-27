@@ -30,6 +30,9 @@ public class PlayerController : MonoBehaviour
     public TMP_InputField jsonOutput_1;
     public TMP_InputField jsonOutput_2;
     public TMP_InputField jsonOutput_3;
+
+    public Button SaveButton;
+    public SaveLoadManager saveLoadManager;
     // Start is called before the first frame update
     private void Start()
     {
@@ -397,10 +400,9 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                if (Input.GetKey(KeyCode.LeftAlt))
-                {
+
                     DeSelectAll();
-                }
+
                 Select();
             }
 

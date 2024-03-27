@@ -9,5 +9,6 @@ public class UIToWorldPointUpdater : MonoBehaviour
     void Update()
     {
         transform.position = Camera.main.WorldToScreenPoint(ParentTile.transform.position);
+        transform.localScale = transform.localScale * (4f / Camera.main.orthographicSize);
     }
 }

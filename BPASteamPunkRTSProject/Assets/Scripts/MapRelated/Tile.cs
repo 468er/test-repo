@@ -188,7 +188,7 @@ public class Tile : MonoBehaviour
     }
     public void SpawnUnits(Unit unit)
     {
-        int amount = 3;
+        int amount = 1;
         List<GameObject> Wave = new List<GameObject>();
         for(int i = 0; i < amount; i++)
         {

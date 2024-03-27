@@ -3433,6 +3433,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 834023647}
   m_CullTransparentMesh: 1
+--- !u!114 &846938000 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2771461842955572517, guid: a010419332daf2f488830e4f8af475df, type: 3}
+  m_PrefabInstance: {fileID: 467859772}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac4959be5e63ddc438bd3989a8d7f293, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &876241650
 GameObject:
   m_ObjectHideFlags: 0
@@ -4007,7 +4018,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1138049490
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7298,6 +7309,10 @@ PrefabInstance:
       propertyPath: MainMenuPanel
       value: 
       objectReference: {fileID: 492181728}
+    - target: {fileID: 3576602151473257091, guid: d3ff18061e3b51c4ab15db9098bea95f, type: 3}
+      propertyPath: SaveAndLoadManager
+      value: 
+      objectReference: {fileID: 846938000}
     - target: {fileID: 4094825449801287770, guid: d3ff18061e3b51c4ab15db9098bea95f, type: 3}
       propertyPath: m_Name
       value: SceneManager

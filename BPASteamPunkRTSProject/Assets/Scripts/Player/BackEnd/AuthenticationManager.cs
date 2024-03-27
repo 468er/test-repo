@@ -17,12 +17,33 @@ public class AuthenticationManager : MonoBehaviour
     public TMP_InputField SignInPassword;
 
     public MainMenu MenuManager;
+    public static AuthenticationManager instance;
+
+
     // Start is called before the first frame update
     async void Awake()
     {
-        //initializes the authenticator
-        DontDestroyOnLoad(this.gameObject);
         await UnityServices.InitializeAsync();
+        //initializes the authenticator
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(instance.gameObject);
+            instance = this;
+        }
+        DontDestroyOnLoad(this.gameObject);
+        if (AuthenticationService.Instance.IsSignedIn== true)
+        {
+            MenuManager.SignInPanel.SetActive(false);
+            MenuManager.SignUpPanel.SetActive(false);
+        }
+        else
+        {
+            await UnityServices.InitializeAsync();
+        }
     }
 
    public async Task SignUpWithUsernamePassword(string username, string password)
